@@ -1,0 +1,130 @@
+#l:hover {
+  background-color: yellow !important;
+  color: black !important;
+}
+
+#s:hover {
+  background-color: yellow !important;
+  color: black !important;
+}
+
+.sub:hover {
+  background-color: yellow !important;
+  color: #e80889 !important;
+}
+.logo {
+  height: 200px;  /* bigger but limited */
+  width: auto;
+  object-fit: contain;
+  padding: 5px; /* gives breathing room */
+}
+.philomene {
+   font-family: "Sniglet", system-ui;
+  font-weight: 500;
+  font-size: x-large;
+  font-style: italic;
+}
+.headings {
+    font-family: "Sniglet", system-ui;
+    font-weight: 400;
+    font-style: italic;
+    color:  yellow;
+    background-color: #e80889;
+}
+.m-headings {
+    font-family: "Sniglet", system-ui;
+    font-weight: 400;
+    font-style: italic;
+    color: #e80889;
+     -webkit-text-stroke: 1px black;
+      text-decoration-line: underline;     /* underline style */
+    text-decoration-color: #e80889;      /* color of underline */
+    text-decoration-thickness: 2px;      /* thickness of underline */
+    text-underline-offset: 3px;          /* distance from text */
+}
+.ss {
+    font-family: "Sniglet", system-ui;
+    font-weight: 400;
+    font-style: italic;
+    color:  #e80889;
+   background-color: #e80889;
+   border: 1px solid black;
+}
+.underline:hover {
+  text-decoration: underline;
+  text-decoration-color: #e80889;     /* change underline color */
+  text-decoration-thickness: 3px; /* make underline thicker */
+  text-underline-offset: 4px;     /* space between text & underline */
+}
+
+.shape {
+    clip-path: polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%);
+    
+}
+.paragraph {
+     font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+.form-control:focus {
+  border-color: #e80889;        /* change border color */
+  box-shadow: 0 0 5px  #e80889;  /* custom glow */
+  outline: none;                /* remove default browser outline */
+}
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background-color: #fce1f0;
+}
+.line {
+  border-bottom: 3px solid  #e80889; /* pink line */
+}
+.card-cover {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.card {
+  border: 2px solid  #e80889; /* pink border */
+}
+.b {
+  border: none;                /* remove all borders first */
+  border-bottom: 2px solid  #e80889; /* keep only bottom */
+}
+
+.feat {
+   font-family: "Poppins", sans-serif;
+   font-style: italic;
+    color:  #e80889;
+     -webkit-text-stroke: 2px black;
+}
+img.img-fluid {
+  max-width: 500px; /* won’t stretch larger */
+  height: auto;     /* keeps aspect ratio */
+}
+body {
+  background-color: #fce1f0;
+}
+.featurette-divider {
+  border: 0;                  /* remove default border */
+  height: 1px;                /* thickness of the line */
+  background-color: #e80889;   /* your desired color */
+  opacity: 1;                 /* make sure it's fully visible */
+}
+ul {
+  padding-left: 1.2rem;       /* adjust spacing from left */
+  margin: 0;                  /* remove extra margins */
+  list-style-position: outside; /* bullet stays outside text */
+}
+
+ul li {
+  margin-bottom: 0.5rem;      /* spacing between items */
+}
+.image {
+  /* border: 5px solid black; */
+  background-color: #e80889;
+  border-radius: 15px;
+  padding: 5px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}

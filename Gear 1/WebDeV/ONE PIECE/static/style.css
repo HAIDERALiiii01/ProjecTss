@@ -1,0 +1,86 @@
+.icon {
+  width: 50px;
+  height: 50px;
+  background-image: var(--icon, url("/static/images/logos/home.png"));
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+a.nav-link:hover .icon {
+  background-image: var(--hover, url("/static/images/logos/homegif.gif"));
+}
+
+.hover-underline {
+  font-size: 25px;
+  color: #ffffff;
+  position: relative;
+  display: inline-block;
+}
+
+.hover-underline::after,
+.hover-underline::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, black, black);
+  bottom: -5px;
+  left: 0;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s ease-out;
+}
+
+.hover-underline::before {
+  top: -5px;
+  transform-origin: left;
+}
+
+.hover-underline:hover::after,
+.hover-underline:hover::before {
+  transform: scaleX(1);
+}
+.nav-link {
+  padding: 0.25rem 0.5rem; /* thinner */
+  font-size: 0.9rem;       /* smaller text */
+}
+.rubik-distressed-regular {
+  font-family: "Rubik Distressed", system-ui;
+  font-weight: 200;
+  font-style:italic;
+}
+.card-title {
+   margin: 0;
+   padding: 0;
+   font-size: 70px; /* adjust for your card */
+   font-weight: 700;
+   background-clip: text;
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   background-image: linear-gradient(transparent 50%,#BBDCE5 50%);
+   -webkit-text-stroke: 1px white;  /* outline like original */
+   transition: all 0.8s ease-in-out;
+   background-size: 100% 200%;
+   background-position: top;
+   cursor: default;
+}
+
+/* Trigger text animation when card is hovered */
+.card:hover .card-title {
+   background-position: bottom; /* slide the gradient down */
+}
+
+.card {
+  background: linear-gradient(to bottom, white 50%, #BBDCE5 50%);
+  background-size: 100% 200%;
+  background-position: top;
+  transition: background-position 3s ease, transform 3s ease, box-shadow 3s ease;
+}
+
+.card:hover {
+  background-position: bottom; /* slides the fill down */
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  color: black; /* ensures body text flips */
+}
