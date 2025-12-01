@@ -1,4 +1,3 @@
-
 import pygame
 from art import coffee_art, coffee_maker_letter_art
 
@@ -61,51 +60,84 @@ class CoffeeMaker():
         self.resources["report"]["ingredients"]["coffee"] = coffee
         self.resources["report"]["cost"] = total_cost
 
-    def change_caclulator(self, user_choice):
+    def change_calculator(self, user_choice):
+        user_paid = 0
         cost = self.resources[user_choice]["cost"]
-        print(f"It would be {cost} PKR. ")
-        thousand = int(input("Insert 1000 rupees note here: "))   
-        five_hundred = int(input("Insert 500 rupees note here: "))   
-        hundred = int(input("Insert 100 rupees note here: "))   
-        fifty = int(input("Insert 50 rupees note here: "))
-        user_paid = thousand + five_hundred + hundred + fifty
+        print(f"It would be {cost} PKR.")
+
+        
+        rupees = [1000, 500, 100, 50]
+
+        for r in rupees:
+            if user_paid >= cost:
+                break
+            try:
+                note = int(input(f"Insert {r} rupees note here: "))
+                user_paid += note
+            except ValueError:
+                print("Invalid input! Please insert numbers only.")
+
         if user_paid < cost:
             print(f"Not enough money!\nMoney refunded: {user_paid} PKR")
             return False
-        else:     
-            change = user_paid - cost   
-            print(f"Here is your change: {change}")  
+        else:
+            change = user_paid - cost
+            print(f"Here is your change: {change} PKR")
             return True
+
             
     def Serving(self, user_demand):
             print(coffee_art)
             print(f"Here is your '{user_demand}'☕😎")
             self.fun()  
 
+
     def run(self):
+        menu = {1: "espresso", 2: "latte", 3: "cappuccino", 4: "report"}
         run_machine = True
         while run_machine: 
             if self.resources["report"]["ingredients"]["water"] < 50 or self.resources["report"]["ingredients"]["milk"] < 100 or self.resources["report"]["ingredients"]["coffee"] < 18:
                 print("Sorry, stock is finished!")
+                self.fun()
                 run_machine = False
             else:
                 run_machine = True    
-                user_input = str(input("What would you like? (espresso/latte/cappuccino/report): "))
+                try:
+                    user_input = int(input(
+                        "(espresso/latte/cappuccino/report/exit): \n"
+                        "Press 1️⃣   for espresso\n"
+                        "Press 2️⃣   for latte\n"
+                        "Press 3️⃣   for cappuccino\n"
+                        "Press 4️⃣   for report\n"
+                        "Press 5️⃣   to exit\n"
+                        "What would you like?:"
+                    ))
+                except ValueError:
+                    print("\nInvalid input! Please enter a number from 1 to 5.\n")
+                    continue
                 
-                if user_input not in ["espresso", "latte", "cappuccino", "report"]:
-                    print("Please select from (espresso/latte/cappuccino/report)")
+                if user_input == 5:
+                    print("Thanks for using our precious machine!")
+                    self.fun()
+                    break
+
+                elif user_input not in menu:
+                    print("Please select from 1-5")
                     continue
 
-                elif user_input == "report":
-                    print(f"Water {self.resources["report"]["ingredients"]["water"]}ml") 
+                choice = menu[user_input]
+
+                if choice == "report":
+                    print(f"\nWater {self.resources["report"]["ingredients"]["water"]}ml") 
                     print(f"Coffee {self.resources["report"]["ingredients"]["coffee"]}gm") 
                     print(f"Milk {self.resources["report"]["ingredients"]["milk"]}ml") 
-                    print(f"Earned {self.resources["report"]["cost"]} PKR") 
+                    print(f"Earned {self.resources["report"]["cost"]} PKR\n") 
+                    continue
 
                 else:
-                    if self.change_caclulator(user_input):
-                        self.dict_update(user_input)
-                        self.Serving(user_input)
+                    if self.change_calculator(choice):
+                        self.dict_update(choice)
+                        self.Serving(choice)
                     else:
                         continue
 
