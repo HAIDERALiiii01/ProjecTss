@@ -23,7 +23,7 @@
 ### ⚙️ [Gear 1](./Gear%201) — Python Basics
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/pPKOYQpTO8AAAAAd/monkey-developer.gif" width="600"/>
+  <img src="https://media1.tenor.com/m/jzlAeJisK9IAAAAd/monkey-laptop.gif" width="600"/>
 </p>
 
 > CLI games, utilities, mini apps & automation. Where it all began.
@@ -33,7 +33,7 @@
 ### 💪 [Gear 2](./Gear%202) — Leveling Up
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/n3KTuj4eEjcAAAAd/thanos-infinity-war.gif" width="600"/>
+  <img src="https://media1.tenor.com/m/e_BjxCFXC3IAAAAd/thanks-infinity.gif" width="600"/>
 </p>
 
 > Aim trainer, Thanos snap, Mastermind. Pushing beyond the basics.
