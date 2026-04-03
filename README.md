@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media1.tenor.com/m/WIN2AP5NB0IAAAAC/hat-anime.gif" alt="ProjecTss" width="800"/>
+  <img src="https://media1.tenor.com/m/inCf_D40OUMAAAAC/to-be-continued-haki-version-one-piece-to-be-continued.gif" alt="ProjecTss" width="800"/>
 </p>
 
 <h1 align="center">⚓ ProjecTss</h1>
@@ -24,7 +24,7 @@
 | [💪 Gear 2](./Gear%202) | Leveling Up | Aim trainer, Thanos snap, Mastermind |
 | [🤖 Gear 3](./Gear%203) | LLMs & AI | Brochure generator, web summarizer, FlightAI |
 | [🔭 Gear 4](./Gear%204) | Computer Vision/Machine Learning | Shadow_clone_jujutsu |
-| [✨ Gear 5](./Gear%205) | Coming Soon | — |
+| [😤 Gear 5](./Gear%205) | Coming Soon | — |
 
 ---
 
