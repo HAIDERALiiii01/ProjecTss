@@ -5,7 +5,7 @@
 <h1 align="center">⚓ ProjecTss</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/gears-5%20of%205%20uploaded-informational?style=flat-square"/>
+  <img src="https://img.shields.io/badge/5 GEARS-informational?style=flat-square"/>
   <img src="https://img.shields.io/github/stars/HAIDERALiiii01/ProjecTss?style=flat-square"/>
   <img src="https://img.shields.io/badge/python-blue?style=flat-square&logo=python&logoColor=white"/>
 </p>
