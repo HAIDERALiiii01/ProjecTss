@@ -35,7 +35,7 @@ python <project_name>.py
 
 ## Requirements
 
-Python 3.x — no external libraries required for most projects. If any project needs extras, there'll be a note inside its folder.
+Python — no external libraries required for most projects. If any project needs extras, there'll be a note inside its folder.
 
 ---
 
