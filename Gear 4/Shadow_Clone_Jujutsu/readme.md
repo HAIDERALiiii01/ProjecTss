@@ -10,27 +10,23 @@ Shadow Clone Jujutsu uses your webcam to detect hand gestures in real time. When
 
 ---
 
-## 📁 Project Structure
+## 📁 Files
 
-```
-shadow_clone_jujutsu/
-│
-├── assets/                              # Smoke effect images and audio files
-├── datasets.csv                         # Hand gesture dataset used to train the model
-├── encoder.pkl                          # Stores the gesture class labels the model recognizes
-├── gesture_model_tflite                 # The trained TFLite model for hand sign recognition
-├── hand_landmark.task                   # MediaPipe task file for detecting and drawing hand landmarks
-├── selfie_multiclass_256x256.tflite     # TFLite segmentation model for extracting person from frame
-├── scaler.pkl                           # Feature scaler saved during training, used during recognition
-│
-├── main.py                              # 🚀 Entry point — run this to start the program
-├── rec.py                               # Record/collect hand gesture data and save to datasets.csv
-├── seg.py                               # Segmentation — extracts person from webcam frame
-├── training.py                          # Trains the gesture recognition model using datasets.csv
-├── testing.py                           # Tests the trained model to verify accuracy
-│
-└── requirements.txt                     # All dependencies
-```
+| File | Description |
+| --- | --- |
+| `main.py` | 🚀 Entry point — run this to start the program |
+| `rec.py` | Record and collect hand gesture data, saves to `datasets.csv` |
+| `seg.py` | Segmentation — extracts person from webcam frame |
+| `training.py` | Trains the gesture recognition model using `datasets.csv` |
+| `testing.py` | Tests the trained model to verify accuracy |
+| `datasets.csv` | Hand gesture dataset used to train the model |
+| `encoder.pkl` | Stores the gesture class labels the model recognizes |
+| `scaler.pkl` | Feature scaler saved during training, used during recognition |
+| `gesture_model_tflite` | The trained TFLite model for hand sign recognition |
+| `hand_landmark.task` | MediaPipe task file for detecting and drawing hand landmarks |
+| `selfie_multiclass_256x256.tflite` | TFLite segmentation model for extracting person from frame |
+| `assets/` | Smoke effect images and audio files |
+| `requirements.txt` | All dependencies |
 
 ---
 
