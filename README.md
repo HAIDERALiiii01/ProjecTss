@@ -18,13 +18,55 @@
 
 ## ⚙️ The Gears
 
-| Gear | Theme | What's inside |
-|---|---|---|
-| [⚙️ Gear 1](./Gear%201) | Python Basics | CLI games, utilities, mini apps & automation |
-| [💪 Gear 2](./Gear%202) | Leveling Up | Aim trainer, Thanos snap, Mastermind |
-| [🤖 Gear 3](./Gear%203) | LLMs & AI | Brochure generator, web summarizer, FlightAI |
-| [🔭 Gear 4](./Gear%204) | Computer Vision/Machine Learning | Shadow_clone_jujutsu |
-| [😤 Gear 5](./Gear%205) | Coming Soon | — |
+---
+
+### ⚙️ [Gear 1](./Gear%201) — Python Basics
+
+<p align="center">
+  <img src="https://media1.tenor.com/m/pPKOYQpTO8AAAAAd/monkey-developer.gif" width="600" height="300"/>
+</p>
+
+> CLI games, utilities, mini apps & automation. Where it all began.
+
+---
+
+### 💪 [Gear 2](./Gear%202) — Leveling Up
+
+<p align="center">
+  <img src="https://media1.tenor.com/m/n3KTuj4eEjcAAAAd/thanos-infinity-war.gif" width="600" height="300"/>
+</p>
+
+> Aim trainer, Thanos snap, Mastermind. Pushing beyond the basics.
+
+---
+
+### 🤖 [Gear 3](./Gear%203) — LLMs & AI
+
+<p align="center">
+  <img src="https://media1.tenor.com/m/a6S35wgiCOsAAAAC/deku-java.gif" width="600" height="300"/>
+</p>
+
+> Brochure generator, web summarizer, FlightAI. The real power of modern LLMs.
+
+---
+
+### 🔭 [Gear 4](./Gear%204) — Computer Vision & ML
+
+<p align="center">
+  <img src="https://media1.tenor.com/m/yDQFy8mSp0sAAAAC/sasuke.gif" width="600" height="300"/>
+</p>
+
+> Shadow_clone_jujutsu. Seeing the world through machines.
+
+---
+
+### 😤 [Gear 5](./Gear%205) — Coming Soon
+
+<p align="center">
+  <img src="https://media1.tenor.com/m/sWkOaRAduFgAAAAC/gear-5-luffy-luffy-gear-5.gif" width="600" height="300"/>
+</p>
+
+> Something powerful is coming. Stay tuned. 👀
 
 ---
 
