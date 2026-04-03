@@ -33,7 +33,7 @@
 ### 💪 [Gear 2](./Gear%202) — Leveling Up
 
 <p align="center">
-  <img src="https://media.giphy.com/media/BzCLJGxXQbwH09jzq0/giphy.gif" width="600"/>
+  <img src="https://media1.tenor.com/m/MO5_imdVXwYAAAAd/thanos-infinity-gauntlet.gif" width="600"/>
 </p>
 
 > Aim trainer, Thanos snap, Mastermind. Pushing beyond the basics.
