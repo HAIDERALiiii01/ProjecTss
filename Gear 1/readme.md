@@ -2,7 +2,7 @@
   <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExemoxa2Zkd2piZTY2MGw4dXZrNXNoczJtMmltcjh4OXYxeWd3czBvbyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tuCFp8rod0x3O/giphy.gif" alt="Gear 1" width="800"/>
 </p>
 
-# ⚙️ Gear 1
+# Gear 1 💪🏻
 
 [![Python](https://img.shields.io/badge/python-3.x-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Projects](https://img.shields.io/badge/projects-CLI%20based-informational?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss)
