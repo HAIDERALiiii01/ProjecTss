@@ -5,7 +5,7 @@
 # Gear 2 💪🏻
 
 [![Python](https://img.shields.io/badge/python-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Projects](https://img.shields.io/badge/projects-3-informational?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss)
+[![Projects](https://img.shields.io/badge/projects-informational?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss)
 [![Stars](https://img.shields.io/github/stars/HAIDERALiiii01/ProjecTss?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss/stargazers)
 
 Built over weekends or one-per while sharpening Python skills — because repetition is the mother of all skills.
