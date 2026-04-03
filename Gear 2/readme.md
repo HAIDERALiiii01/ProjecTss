@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://tenor.com/view/one-piece-gif-22709763" alt="Gear 2" width="800"/>
+  <img src="https://media1.tenor.com/m/t0OJ3fPrFbYAAAAC/one-piece.gif" alt="Gear 2" width="800"/>
 </p>
 
 # Gear 2 💪🏻
