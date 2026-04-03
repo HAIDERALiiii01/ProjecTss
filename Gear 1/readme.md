@@ -4,7 +4,7 @@
 
 # Gear 1 💪🏻
 
-[![Python](https://img.shields.io/badge/python-3.x-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Projects](https://img.shields.io/badge/projects-CLI%20based-informational?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss)
 [![Stars](https://img.shields.io/github/stars/HAIDERALiiii01/ProjecTss?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss/stargazers)
 
@@ -25,10 +25,10 @@ Simple? Sure. But every great codebase starts somewhere.
 
 | Category | Description |
 |---|---|
-| 🎮 Games | CLI-based fun |
-| 🎮 Games | GUI-based fun |
+| 🎮 Games | CLI/GUI-based fun |
 | ⚡ Automation | Scripts that save time |
 | 📦 Mini Apps | Weather app etc |
+| 👀 Special | Whatsapp chatbot |
 
 ## Getting started
 ```bash
