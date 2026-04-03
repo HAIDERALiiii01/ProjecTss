@@ -33,7 +33,7 @@ Simple? Sure. But every great codebase starts somewhere.
 ## Getting started
 ```bash
 git clone https://github.com/HAIDERALiiii01/ProjecTss
-cd "ProjecTss/Gear 1"
+cd "ProjecTss/Gear 2"
 python <project_name>.py
 ```
 
@@ -43,4 +43,4 @@ Python — no external libraries required for most projects. If any project need
 
 ---
 
-*"As long as you are alive, there will be better things later, and there will be many."*
+*"Repetion is the mother of all skills."*
