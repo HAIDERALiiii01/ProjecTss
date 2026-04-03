@@ -2,7 +2,7 @@
   <img src="https://media1.tenor.com/m/t0OJ3fPrFbYAAAAC/one-piece.gif" alt="Gear 2" width="800"/>
 </p>
 
-# Gear 2 💪🏻
+# Gear 2 😎
 
 [![Python](https://img.shields.io/badge/python-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Projects](https://img.shields.io/badge/projects-informational?style=flat-square)](https://github.com/HAIDERALiiii01/ProjecTss)
