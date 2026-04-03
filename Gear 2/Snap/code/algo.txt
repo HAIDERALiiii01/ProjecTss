@@ -1,0 +1,8 @@
+PSEUDO CODE:
+
+LEVEL-1:
+
+1)Need to learn how to navigate and delete files, go to docs or gpt.
+2)Have to give gui so have two options, tkinter and pyqt5.
+3)Then the bg, file icon images and gif.
+4)Create buttons and then perform action.
