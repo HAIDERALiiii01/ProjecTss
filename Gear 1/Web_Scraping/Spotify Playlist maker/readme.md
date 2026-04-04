@@ -1,7 +1,7 @@
 # 🎵 Spotify Playlist Maker
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/3B1rP83XVZ4AAAAd/ofergang-daniel.gif" alt="Spotify Playlist Maker" width="800"/>
+  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjQ2dHZrZnB2Z3E5cGsyOGl0MXI3ZnJkeGUwOTR4YjYyYmk5d3JhNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/guNXesWtLfqOfnWwmx/giphy.gif" alt="Spotify Playlist Maker" width="800"/>
 </p>
 
 > Scrape the Billboard Hot 100. Turn it into a Spotify playlist. Automatically. 🎧
