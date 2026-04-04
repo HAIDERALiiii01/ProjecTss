@@ -1,7 +1,7 @@
 # ⏱️ Stopwatch
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/5rR5t1g9P3IAAAAC/bfcr-battle-for-champions-resort.gif" alt="Stopwatch" width="800"/>
+  <img src="https://media1.tenor.com/m/v_d_Flu6pY0AAAAC/countdown-lastseconds.gif" alt="Stopwatch" width="800"/>
 </p>
 
 > Start. Stop. Reset. Simple as that. ⏱️
