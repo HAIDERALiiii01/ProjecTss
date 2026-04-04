@@ -1,5 +1,9 @@
 # 🥷 Shadow Clone Jujutsu
 
+<p align="center">
+  <img src="https://media1.tenor.com/m/W4O0eoqdaREAAAAC/naruto-naruto-shippuden.gif" alt="Clone" width="800"/>
+</p>
+
 > Perform a hand sign — and your clones appear. A real-time computer vision project inspired by Naruto.
 
 ---
