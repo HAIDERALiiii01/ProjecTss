@@ -1,7 +1,7 @@
 # 🐢 Turtle Race — Battle of the Strongest
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/bEOL5eqrOdoAAAAd/leading-the-race-national-geographic.gif" alt="Turtle Race" width="800"/>
+  <img src="https://media1.tenor.com/m/zabQ7gLy57YAAAAC/jet-turtle-jet-turtle2.gif" alt="Turtle Race" width="800"/>
 </p>
 
 > Pick your turtle. Watch them race. Hope for the best. 🏁
