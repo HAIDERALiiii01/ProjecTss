@@ -1,7 +1,7 @@
 # 💰 Price Tracker
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/XI2X2TPFRzEAAAAd/mr-bean-bean.gif" alt="Price Tracker" width="800"/>
+  <img src="https://media1.tenor.com/m/Gq5wfrkgezMAAAAC/price-cost-so-much.gif" alt="Price Tracker" width="800"/>
 </p>
 
 > Set your budget. Run the script. Buy when the price is right. 🛒
