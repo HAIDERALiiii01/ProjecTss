@@ -33,7 +33,7 @@
 ### 💪 [Gear 2](./Gear%202) — Leveling Up
 
 <p align="center">
-  <img src="https://media.giphy.com/media/e6V4sO00YaCZZCuUVj/giphy.gif" width="600"/>
+  <img src="https://media1.tenor.com/m/Ai80wth0xLMAAAAC/goku-ssj.gif" width="600"/>
 </p>
 
 > Aim trainer, Thanos snap, Mastermind. Pushing beyond the basics.
@@ -42,7 +42,7 @@
 ### 🤖 [Gear 3](./Gear%203) — LLMs & AI
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/a6S35wgiCOsAAAAC/deku-java.gif" width="600"/>
+  <img src="https://media1.tenor.com/m/_c8RgO7aX7MAAAAC/zach-galifianakis-dfx.gif" width="600"/>
 </p>
 
 > Brochure generator, web summarizer, FlightAI. The real power of modern LLMs.
