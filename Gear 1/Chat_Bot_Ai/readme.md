@@ -81,6 +81,8 @@ The bot is prompted to act as a 19-year-old from Karachi who:
 pyautogui
 pyperclip
 google-generativeai
+
+pip install pyautogui pyperclip google-generativeai
 ```
 
 ---
