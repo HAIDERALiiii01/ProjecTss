@@ -103,4 +103,4 @@ This project downloads models from Hugging Face, which requires a free API token
 
 ---
 
-*"Power of the sun, in the palm of my hand😁."*
+*"Power of the sun, in the palm of my hand😌."*
