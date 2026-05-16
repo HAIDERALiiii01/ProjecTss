@@ -1,5 +1,9 @@
 # PyPlus 🐍➕
 
+<p align="center">
+  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmI3c2Fndmk0Y3VnOXpyM3M1aGQyZmdzZnd6dnUzb2VyMHpnNmN1eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d4blalI6x2oc4xAA/giphy.gif" width="600"/>
+</p>
+
 > Convert Python to blazing-fast C++ — powered by open and closed source AI models.
 
 ---
