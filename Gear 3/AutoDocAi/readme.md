@@ -1,7 +1,7 @@
 # 🤖 AutoDoc AI — AI Based Code Commenter
 
 <p align="center">
-  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXR1c256cDZzNjFoZGd2M3Nkampra2xzbHM3MXY4dnI2ejdsdGh6eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HwmdjTpOCR4fuhxN54/giphy.gif" width="600"/>
+  <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXlkb2Z2dTMyZzJnMjJkc3RwMHFqcWd3ZHpvaWNwdXozd254OThvNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sSmxfWnEVxtWU/giphy.gif" width="600"/>
 </p>
 
 > Paste your code. Pick a style. Get it commented. Powered by GPT and Gemini. 🤖
