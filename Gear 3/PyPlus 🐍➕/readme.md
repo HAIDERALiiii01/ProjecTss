@@ -180,4 +180,4 @@ Key packages: `openai`, `gradio`, `python-dotenv`, `IPython`
 
 ---
 
-*"For when Python says: 'I'm trying my best.'"*
+*"For when Python says: 'I'm trying my best.😗'"*
