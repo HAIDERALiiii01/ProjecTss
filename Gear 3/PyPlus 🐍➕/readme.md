@@ -176,4 +176,4 @@ Key packages: `openai`, `gradio`, `python-dotenv`, `IPython`
 
 ---
 
-*"Same logic. Faster machine. In seconds."*
+*"For when Python says: 'I'm trying my best.'"*
