@@ -18,8 +18,9 @@ An AI-powered code documentation tool with a Gradio web interface. Paste any cod
 
 | File | Description |
 | --- | --- |
-| `AutoDocAi.ipynb` | 📓 Main notebook — run all cells to launch the Gradio interface |
+| `main.ipynb` | 📓 Main notebook — run all cells to launch the Gradio interface |
 | `styles.py` | 🎨 Custom CSS for the Gradio UI |
+| `requirements.txt` | 📦 All dependencies listed — install with one command |
 | `.env` | Stores your API keys — create this yourself |
 
 ---
@@ -45,6 +46,12 @@ cd "ProjecTss/Gear 3/AutoDocAi"
 
 ### 2. Install dependencies
 
+Using `requirements.txt` (recommended):
+```bash
+pip install -r requirements.txt
+```
+
+Or manually:
 ```bash
 pip install openai gradio python-dotenv
 ```
@@ -67,7 +74,7 @@ You have two options:
 ### Option A — VS Code (recommended)
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install the **Jupyter** extension from the Extensions panel
-3. Open `AutoDocAi.ipynb` directly in VS Code
+3. Open `main.ipynb` directly in VS Code
 4. Click **Run All** or run cells one by one with `Shift+Enter`
 
 ### Option B — JupyterLab in browser
@@ -79,7 +86,7 @@ pip install jupyterlab
 ```bash
 jupyter lab
 ```
-3. Your browser will open automatically — navigate to `AutoDocAi.ipynb` and run all cells
+3. Your browser will open automatically — navigate to `main.ipynb` and run all cells
 
 ---
 
@@ -113,7 +120,8 @@ ollama pull codellama   # better for code tasks
 ollama pull deepseek-coder
 ```
 
-### 3. Ollama runs an OpenAI-compatible server locally, so just point the client to it:
+### 3. Point the client to Ollama's local server
+Ollama runs an OpenAI-compatible server locally, so add this to the notebook:
 ```python
 ollama_client = OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
 ```
@@ -124,8 +132,9 @@ Then add your Ollama models to the `models` list and handle them in `get_client(
 
 ## 📦 Requirements
 
+All dependencies are listed in `requirements.txt`. Install with:
 ```bash
-pip install openai gradio python-dotenv jupyterlab
+pip install -r requirements.txt
 ```
 
 ---
