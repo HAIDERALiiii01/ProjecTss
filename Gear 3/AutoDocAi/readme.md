@@ -148,4 +148,4 @@ pip install -r requirements.txt
 
 ---
 
-*"Your code, but documented. In seconds."*
+*"Saving developers from: 'I'll document it later.😉"*
