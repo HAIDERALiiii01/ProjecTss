@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>World Cup Box</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ================= FLOODLIGHT BACKDROP ================= -->
+  <div class="stadium-glow" aria-hidden="true"></div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-head">
+    <div class="site-head__mark">
+      <span class="site-head__ball" aria-hidden="true"></span>
+      <span class="site-head__wordmark">WORLD CUP<br>BOX</span>
+    </div>
+    <p class="site-head__kicker">1930 &mdash; 2022 &middot; ninety-two years on the pitch</p>
+  </header>
+
+  <!-- ================= MAIN ================= -->
+  <main id="home-view" class="view view--home">
+
+    <section class="rail" data-rail="winners">
+      <div class="rail__head">
+        <h2 class="rail__title">Winners</h2>
+        <p class="rail__sub">Every champion, every final, one line of scoreboard.</p>
+      </div>
+      <div class="rail__track" id="winners-track"></div>
+    </section>
+
+    <section class="rail" data-rail="moments">
+      <div class="rail__head">
+        <h2 class="rail__title">Moments</h2>
+        <p class="rail__sub">The plays that outlived the final whistle.</p>
+      </div>
+      <div class="rail__track" id="moments-track"></div>
+    </section>
+
+  </main>
+
+  <!-- ================= DETAIL OVERLAY ================= -->
+  <section id="detail-view" class="view view--detail" aria-hidden="true">
+    <button class="detail__close" id="detail-close" aria-label="Close">&times;</button>
+    <div class="detail__inner">
+      <div class="detail__hero" id="detail-hero">
+        <div class="detail__hero-media" id="detail-hero-media"></div>
+        <div class="detail__hero-text">
+          <span class="detail__year" id="detail-year"></span>
+          <h1 class="detail__title" id="detail-title"></h1>
+          <p class="detail__tagline" id="detail-tagline"></p>
+          <div class="detail__facts" id="detail-facts"></div>
+        </div>
+      </div>
+
+      <div class="detail__body">
+        <ol class="detail__timeline" id="detail-timeline"></ol>
+
+        <div class="detail__gallery" id="detail-gallery"></div>
+
+        <button class="detail__ask" id="detail-ask">
+          Ask the box about this &rarr;
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHAT LAUNCHER ================= -->
+  <button id="chat-launcher" class="chat-launcher">
+    <span class="chat-launcher__dot"></span>
+    Ask the Box
+  </button>
+
+  <!-- ================= CHAT DRAWER ================= -->
+  <aside id="chat-drawer" class="chat-drawer" aria-hidden="true">
+    <div class="chat-drawer__head">
+      <div>
+        <h2 class="chat-drawer__title">Press Box</h2>
+        <p class="chat-drawer__sub">Kick off your questions here.</p>
+      </div>
+      <button id="chat-close" class="chat-drawer__close" aria-label="Close chat">&times;</button>
+    </div>
+
+    <div id="chat-log" class="chat-log">
+      <div class="chat-msg chat-msg--bot">
+        <p>Ask me anything about World Cup history &mdash; winners, records, moments, stats. I'll pull from the box.</p>
+      </div>
+    </div>
+
+    <form id="chat-form" class="chat-form">
+      <input id="chat-input" class="chat-form__input" type="text" placeholder="e.g. Who scored the most goals in a single World Cup?" autocomplete="off" />
+      <button type="submit" class="chat-form__send" aria-label="Send">&rarr;</button>
+    </form>
+  </aside>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

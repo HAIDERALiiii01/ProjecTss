@@ -1,0 +1,146 @@
+[
+  {
+    "id": "messi-2022",
+    "year": 2022,
+    "title": "Messi lifts the trophy",
+    "tagline": "A career's final missing piece",
+    "timeline": [
+      "Lionel Messi enters his fifth and, he says beforehand, likely final World Cup.",
+      "He plays the tournament of his life: a semi-final masterclass against Croatia, two goals in the final.",
+      "After Argentina survive France's Mbappé-inspired comeback, Messi scores in the shootout.",
+      "He is handed a bisht robe by the Emir of Qatar before lifting the trophy, an image that circles the world."
+    ]
+  },
+  {
+    "id": "hand-of-god-1986",
+    "title": "The Hand of God",
+    "year": 1986,
+    "tagline": "Two goals, four minutes apart",
+    "timeline": [
+      "England meet Argentina in a politically charged quarter-final, a year after the Falklands War.",
+      "Six minutes into the second half, Diego Maradona punches the ball into the net, going unseen by the referee.",
+      "Four minutes later he collects the ball in his own half and dribbles past five England players to score again.",
+      "Maradona later calls the first goal 'a little bit the hand of God, a little bit the head of Maradona'."
+    ]
+  },
+  {
+    "id": "maracanazo-1950",
+    "title": "The Maracanazo",
+    "year": 1950,
+    "tagline": "Brazil's home final defeat",
+    "timeline": [
+      "Brazil enter the final match of the 1950 group stage needing only a draw against Uruguay.",
+      "Newspapers had already printed pre-match editions celebrating a Brazilian championship.",
+      "Uruguay come from behind to win 2-1 in front of the largest crowd ever to watch a football match.",
+      "The defeat is still described in Brazil as a national trauma."
+    ]
+  },
+  {
+    "id": "zidane-headbutt-2006",
+    "title": "Zidane's headbutt",
+    "year": 2006,
+    "tagline": "A legend's last kick, and no kick at all",
+    "timeline": [
+      "Zinedine Zidane opens the scoring in his final match with a panenka penalty.",
+      "Italy's Marco Materazzi equalises and, moments later, exchanges words with Zidane.",
+      "Zidane headbutts Materazzi in the chest and is sent off in extra time.",
+      "France go on to lose the final on penalties, and Zidane's career ends mid-pitch rather than with the trophy."
+    ]
+  },
+  {
+    "id": "hurst-hattrick-1966",
+    "title": "Geoff Hurst's hat-trick",
+    "year": 1966,
+    "tagline": "Still the only one in a final",
+    "timeline": [
+      "West Germany equalise deep into stoppage time to send the final to extra time.",
+      "Geoff Hurst's shot cannons down off the crossbar; the goal is awarded despite lasting debate over whether it crossed the line.",
+      "Hurst scores again in the closing seconds as fans spill onto the pitch.",
+      "It remains the only hat-trick scored in a World Cup final."
+    ]
+  },
+  {
+    "id": "pele-debut-1958",
+    "title": "Pelé's arrival",
+    "year": 1958,
+    "tagline": "A 17-year-old changes the sport",
+    "timeline": [
+      "Pelé makes his World Cup debut at 17, the youngest player in the tournament's history to that point.",
+      "He scores a hat-trick in the semi-final against France.",
+      "In the final against Sweden he scores twice, including a goal where he chests the ball over a defender before volleying it in.",
+      "He becomes the youngest player ever to win a World Cup."
+    ]
+  },
+  {
+    "id": "iniesta-2010",
+    "title": "Iniesta's late winner",
+    "year": 2010,
+    "tagline": "Spain's first title, in the 116th minute",
+    "timeline": [
+      "Spain and the Netherlands play a tense, foul-heavy final that stays scoreless through 90 minutes.",
+      "Extra time brings a Dutch red card and mounting pressure from Spain's possession game.",
+      "In the 116th minute, Andrés Iniesta controls a chested pass and volleys past the Dutch keeper.",
+      "Spain win their first World Cup, and Iniesta's shirt afterward reads a tribute to a friend who had recently died."
+    ]
+  },
+  {
+    "id": "mbappe-hattrick-2022",
+    "title": "Mbappé's final hat-trick",
+    "year": 2022,
+    "tagline": "Two goals in ninety seconds",
+    "timeline": [
+      "Down 2-0 with France going through the motions, Kylian Mbappé converts a penalty in the 80th minute.",
+      "He scores again 97 seconds later with a first-time volley to level the final at 2-2.",
+      "He completes his hat-trick in extra time, only the second in a World Cup final.",
+      "Despite the effort, France lose the shootout and Mbappé finishes the tournament as top scorer."
+    ]
+  },
+  {
+    "id": "cameroon-1990",
+    "title": "Cameroon shock Argentina",
+    "year": 1990,
+    "tagline": "The opening match upset",
+    "timeline": [
+      "Defending champions Argentina, with Diego Maradona, open the tournament against Cameroon.",
+      "Cameroon play with two men sent off yet still find a late winner.",
+      "Francois Omam-Biyik's header stuns the champions 1-0.",
+      "Cameroon go on to reach the quarter-finals, then a first for an African nation."
+    ]
+  },
+  {
+    "id": "senegal-2002",
+    "title": "Senegal beat the champions",
+    "year": 2002,
+    "tagline": "France fall in the opener",
+    "timeline": [
+      "Senegal, playing their first ever World Cup, face defending champions France in the opening match.",
+      "Papa Bouba Diop scores the only goal and is mobbed by teammates in a celebratory dance around the corner flag.",
+      "France go on to be eliminated in the group stage without scoring a single goal.",
+      "Senegal reach the quarter-finals in their debut tournament."
+    ]
+  },
+  {
+    "id": "usa-england-1950",
+    "title": "USA shock England",
+    "year": 1950,
+    "tagline": "The result English papers assumed was a typo",
+    "timeline": [
+      "England, playing their first World Cup, are heavy favourites against a part-time USA squad.",
+      "Joe Gaetjens, a Haitian-born dishwasher playing amateur football in New York, heads in the only goal.",
+      "Some English newspapers reportedly assumed the wire-service scoreline was a misprint for 10-1.",
+      "It remains one of the biggest upsets in World Cup history."
+    ]
+  },
+  {
+    "id": "carlos-alberto-1970",
+    "title": "Carlos Alberto's team goal",
+    "year": 1970,
+    "tagline": "Brazil's flowing finish",
+    "timeline": [
+      "In the 1970 final, Brazil work the ball through several players with one-touch passing.",
+      "Pelé receives it near the box and, without looking up, rolls it wide to an overlapping run.",
+      "Captain Carlos Alberto arrives at full speed to drive it into the corner.",
+      "The goal is widely cited as one of the greatest team goals in football history."
+    ]
+  }
+]

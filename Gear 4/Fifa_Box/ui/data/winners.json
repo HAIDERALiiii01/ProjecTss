@@ -1,0 +1,332 @@
+[
+  {
+    "id": "2022",
+    "year": 2022,
+    "champion": "Argentina",
+    "runner_up": "France",
+    "host": "Qatar",
+    "score": "3-3 (4-2 pens)",
+    "tagline": "Messi's crown",
+    "timeline": [
+      "Argentina open with a shock loss to Saudi Arabia, then win every match through the knockouts.",
+      "Messi captains the side through Australia, the Netherlands and Croatia, playing some of the best football of his career at 35.",
+      "The final against France swings wildly: Argentina lead 2-0, Mbappé scores twice in two minutes to force extra time, then completes a hat-trick.",
+      "Argentina win 4-2 on penalties. Messi lifts the trophy that had eluded him, finally completing his career."
+    ]
+  },
+  {
+    "id": "2018",
+    "year": 2018,
+    "champion": "France",
+    "runner_up": "Croatia",
+    "host": "Russia",
+    "score": "4-2",
+    "tagline": "Mbappé arrives",
+    "timeline": [
+      "A 19-year-old Kylian Mbappé announces himself, scoring in the round of 16 rout of Argentina and again in the final.",
+      "Croatia, led by Luka Modrić, reach their first ever final after three straight extra-time knockout wins.",
+      "France control the final 4-2, helped by a deflected free kick and a rare World Cup final own goal.",
+      "Didier Deschamps becomes only the third man to win the World Cup as both player and coach."
+    ]
+  },
+  {
+    "id": "2014",
+    "year": 2014,
+    "champion": "Germany",
+    "runner_up": "Argentina",
+    "host": "Brazil",
+    "score": "1-0 (a.e.t.)",
+    "tagline": "The Mineirazo and a Götze winner",
+    "timeline": [
+      "Hosts Brazil are stunned 7-1 by Germany in the semi-final, one of the most lopsided results in World Cup history.",
+      "Germany carry that momentum into the final against Messi's Argentina.",
+      "Mario Götze volleys in a Schürrle cross seven minutes from the end of extra time.",
+      "Germany become the first European team to win a World Cup held in the Americas."
+    ]
+  },
+  {
+    "id": "2010",
+    "year": 2010,
+    "champion": "Spain",
+    "runner_up": "Netherlands",
+    "host": "South Africa",
+    "score": "1-0 (a.e.t.)",
+    "tagline": "Tiki-taka's peak",
+    "timeline": [
+      "Spain lose their opening match to Switzerland, then win every remaining game 1-0.",
+      "Their tiki-taka possession style, built around Xavi and Iniesta, defines the tournament.",
+      "A tense, foul-heavy final against the Netherlands stays goalless deep into extra time.",
+      "Andrés Iniesta scores in the 116th minute, giving Spain their first World Cup."
+    ]
+  },
+  {
+    "id": "2006",
+    "year": 2006,
+    "champion": "Italy",
+    "runner_up": "France",
+    "host": "Germany",
+    "score": "1-1 (5-3 pens)",
+    "tagline": "Zidane's final act",
+    "timeline": [
+      "Zinedine Zidane, in his last professional match, scores a cheeky panenka penalty to open the scoring.",
+      "Marco Materazzi equalises for Italy soon after with a header.",
+      "In extra time Zidane headbutts Materazzi in the chest and is sent off, ending his career in red.",
+      "Italy win the shootout 5-3 to claim their fourth title."
+    ]
+  },
+  {
+    "id": "2002",
+    "year": 2002,
+    "champion": "Brazil",
+    "runner_up": "Germany",
+    "host": "South Korea & Japan",
+    "score": "2-0",
+    "tagline": "Ronaldo's redemption",
+    "timeline": [
+      "The first World Cup held in Asia, and the first co-hosted by two nations.",
+      "Ronaldo, recovering from career-threatening knee injuries, top-scores with eight goals.",
+      "He scores both goals in the final against Germany, completing a personal comeback four years after a mysterious final-day collapse in 1998.",
+      "Brazil claim a record fifth title."
+    ]
+  },
+  {
+    "id": "1998",
+    "year": 1998,
+    "champion": "France",
+    "runner_up": "Brazil",
+    "host": "France",
+    "score": "3-0",
+    "tagline": "Les Bleus at home",
+    "timeline": [
+      "Hosts France build a side around Zidane, Deschamps and Petit.",
+      "Brazil's Ronaldo suffers a still-unexplained fit hours before the final and is a shadow of himself on the pitch.",
+      "Zidane heads in two first-half goals, and Petit adds a third late on.",
+      "France win their first World Cup on home soil."
+    ]
+  },
+  {
+    "id": "1994",
+    "year": 1994,
+    "champion": "Brazil",
+    "runner_up": "Italy",
+    "host": "USA",
+    "score": "0-0 (3-2 pens)",
+    "tagline": "First final decided on penalties",
+    "timeline": [
+      "The World Cup's first visit to the United States draws record aggregate attendance.",
+      "Brazil, built around Romário and Bebeto, go unbeaten through the tournament.",
+      "The final against Italy is goalless after 120 minutes, the first World Cup final to reach a shootout.",
+      "Roberto Baggio skies the decisive penalty over the bar, and Brazil win their fourth title."
+    ]
+  },
+  {
+    "id": "1990",
+    "year": 1990,
+    "champion": "Germany",
+    "runner_up": "Argentina",
+    "host": "Italy",
+    "score": "1-0",
+    "tagline": "West Germany's third star",
+    "timeline": [
+      "A tournament remembered for defensive, foul-heavy football and two red cards in the final.",
+      "Defending champions Argentina, without the injured backbone of 1986, scrape through on penalties twice.",
+      "Andreas Brehme converts a contentious late penalty for West Germany.",
+      "West Germany win their third title, days before German reunification."
+    ]
+  },
+  {
+    "id": "1986",
+    "year": 1986,
+    "champion": "Argentina",
+    "runner_up": "West Germany",
+    "host": "Mexico",
+    "score": "3-2",
+    "tagline": "Maradona's tournament",
+    "timeline": [
+      "Diego Maradona produces one of the greatest individual tournaments in history.",
+      "In the quarter-final against England he scores the 'Hand of God' goal with his fist, then minutes later the 'Goal of the Century', dribbling past five defenders.",
+      "He sets up the winner in the semi-final and scores twice in the final.",
+      "Argentina hold off a West German comeback to win 3-2."
+    ]
+  },
+  {
+    "id": "1982",
+    "year": 1982,
+    "champion": "Italy",
+    "runner_up": "West Germany",
+    "host": "Spain",
+    "score": "3-1",
+    "tagline": "Rossi's golden boot run",
+    "timeline": [
+      "Paolo Rossi returns from a match-fixing suspension and is quiet early on.",
+      "He then scores a hat-trick to eliminate favourites Brazil in one of the sport's great matches.",
+      "Rossi adds two more against Poland in the semi-final and opens the scoring in the final.",
+      "Italy beat West Germany 3-1 to win their third title, with Rossi taking the Golden Boot and Golden Ball."
+    ]
+  },
+  {
+    "id": "1978",
+    "year": 1978,
+    "champion": "Argentina",
+    "runner_up": "Netherlands",
+    "host": "Argentina",
+    "score": "3-1 (a.e.t.)",
+    "tagline": "Home glory under a military junta",
+    "timeline": [
+      "Argentina host the tournament under a military dictatorship, and win amid later-confirmed allegations of match manipulation in the second round.",
+      "The Netherlands, without star Johan Cruyff who declined to play, reach a second straight final.",
+      "Mario Kempes scores twice in extra time for the hosts.",
+      "Argentina win their first World Cup."
+    ]
+  },
+  {
+    "id": "1974",
+    "year": 1974,
+    "champion": "West Germany",
+    "runner_up": "Netherlands",
+    "host": "West Germany",
+    "score": "2-1",
+    "tagline": "Total Football meets its match",
+    "timeline": [
+      "The Netherlands, playing Rinus Michels' influential 'Total Football', take the lead inside two minutes without West Germany touching the ball.",
+      "West Germany, led by Franz Beckenbauer and Gerd Müller, respond and turn the game around before half time.",
+      "Müller scores the winner just before the break.",
+      "West Germany hold on to win their second title on home soil."
+    ]
+  },
+  {
+    "id": "1970",
+    "year": 1970,
+    "champion": "Brazil",
+    "runner_up": "Italy",
+    "host": "Mexico",
+    "score": "4-1",
+    "tagline": "The greatest Brazil side",
+    "timeline": [
+      "Pelé, at his third and final World Cup, leads a Brazil side widely regarded as the greatest ever assembled.",
+      "Brazil win every match of the tournament.",
+      "The final against Italy features a flowing team goal finished by captain Carlos Alberto.",
+      "Brazil win a third title and keep the Jules Rimet Trophy permanently, as per the rules of the time."
+    ]
+  },
+  {
+    "id": "1966",
+    "year": 1966,
+    "champion": "England",
+    "runner_up": "West Germany",
+    "host": "England",
+    "score": "4-2 (a.e.t.)",
+    "tagline": "Hurst's hat-trick",
+    "timeline": [
+      "Hosts England reach their first World Cup final, having conceded only three goals all tournament.",
+      "West Germany equalise in the final's last minute of normal time to force extra time.",
+      "Geoff Hurst scores twice more in extra time, including a shot off the crossbar whose goal-line status is still debated.",
+      "Hurst remains the only player to score a hat-trick in a World Cup final. England win their only title."
+    ]
+  },
+  {
+    "id": "1962",
+    "year": 1962,
+    "champion": "Brazil",
+    "runner_up": "Czechoslovakia",
+    "host": "Chile",
+    "score": "3-1",
+    "tagline": "Back-to-back for Brazil",
+    "timeline": [
+      "Pelé is injured early in the tournament and misses most of it.",
+      "Garrincha steps up as the tournament's outstanding player, driving Brazil through the knockout rounds.",
+      "Brazil overturn an early deficit in the final against Czechoslovakia.",
+      "Brazil retain the title, becoming the first team to win back-to-back World Cups since 1938."
+    ]
+  },
+  {
+    "id": "1958",
+    "year": 1958,
+    "champion": "Brazil",
+    "runner_up": "Sweden",
+    "host": "Sweden",
+    "score": "5-2",
+    "tagline": "Pelé's arrival, aged 17",
+    "timeline": [
+      "A 17-year-old Pelé becomes the youngest player to appear in a World Cup, then the youngest to score and to win it.",
+      "Brazil introduce a back-four formation that influences tactics for years afterward.",
+      "Pelé scores twice in the final, including a celebrated chest-and-volley goal.",
+      "Brazil win their first World Cup, played outside South America."
+    ]
+  },
+  {
+    "id": "1954",
+    "year": 1954,
+    "champion": "West Germany",
+    "runner_up": "Hungary",
+    "host": "Switzerland",
+    "score": "3-2",
+    "tagline": "The Miracle of Bern",
+    "timeline": [
+      "Hungary's 'Mighty Magyars', unbeaten in four years, thrash West Germany 8-3 in the group stage.",
+      "The two sides meet again in the final.",
+      "West Germany fall behind early but fight back to win 3-2, denying a Hungary team many consider the best never to win the trophy.",
+      "The result is remembered in Germany as the 'Miracle of Bern'."
+    ]
+  },
+  {
+    "id": "1950",
+    "year": 1950,
+    "champion": "Uruguay",
+    "runner_up": "Brazil",
+    "host": "Brazil",
+    "score": "2-1",
+    "tagline": "The Maracanazo",
+    "timeline": [
+      "The tournament uses a final round-robin group rather than a single final; Brazil only need a draw against Uruguay to win at home.",
+      "Nearly 200,000 fans pack the Maracanã expecting a home celebration.",
+      "Uruguay come back from 1-0 down to win 2-1, silencing the stadium.",
+      "The result, still called the Maracanazo, remains one of the sport's great upsets."
+    ]
+  },
+  {
+    "id": "1938",
+    "year": 1938,
+    "champion": "Italy",
+    "runner_up": "Hungary",
+    "host": "France",
+    "score": "4-2",
+    "tagline": "Italy retain the title",
+    "timeline": [
+      "Italy travel and win it again, becoming the first team to retain the World Cup.",
+      "Playing under Fascist Italy, the squad faces political pressure to win.",
+      "Gino Colaussi and Silvio Piola each score twice in the final.",
+      "Italy beat Hungary 4-2, and the trophy is not contested again until 1950 due to the Second World War."
+    ]
+  },
+  {
+    "id": "1934",
+    "year": 1934,
+    "champion": "Italy",
+    "runner_up": "Czechoslovakia",
+    "host": "Italy",
+    "score": "2-1 (a.e.t.)",
+    "tagline": "Italy's first title, at home",
+    "timeline": [
+      "The first World Cup to use a straight knockout format after qualifying.",
+      "Hosts Italy, managed by Vittorio Pozzo, are pushed by Czechoslovakia in the final.",
+      "Czechoslovakia lead with 20 minutes left before Italy equalise and win in extra time.",
+      "Italy claim their first title on home soil."
+    ]
+  },
+  {
+    "id": "1930",
+    "year": 1930,
+    "champion": "Uruguay",
+    "runner_up": "Argentina",
+    "host": "Uruguay",
+    "score": "4-2",
+    "tagline": "Where it all began",
+    "timeline": [
+      "The inaugural World Cup is held in Uruguay, chosen partly to mark 100 years of Uruguayan independence.",
+      "Thirteen teams enter, mostly from the Americas, as the long boat journey deters several European sides.",
+      "Hosts Uruguay meet neighbours Argentina in the final in front of a crowd in Montevideo.",
+      "Uruguay win 4-2 to become the first World Cup champions."
+    ]
+  }
+]
