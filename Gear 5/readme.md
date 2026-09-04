@@ -1,7 +1,6 @@
 <p align="center">
-  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHdpNDloZzgzemh0NWg4c25odnNzNWdzcWZ0NXpmOGczdDhmbXVnaiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/4eTuzu8xIEqdDfPu9J/giphy.gif" alt="Gear 5" width="800"/>
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHdpNDloZzgzemh0NWg4c25odnNzNWdzcWZ0NXpmOGczdDhmbXVnaiZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/4eTuzu8xIEqdDfPu9J/giphy.gif" alt="Gear 5" width="600" />
 </p>
-
 # Gear 5 👀
 
 > **This is my peak.** ☀️
