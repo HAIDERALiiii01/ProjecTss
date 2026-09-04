@@ -59,10 +59,10 @@
 
 ---
 
-### 😤 [Gear 5](./Gear%205) — Coming Soon
+### 😤 [Gear 5](./Gear%205) — Machine Learning & Agentic Ai
 
 <p align="center">
-  <img src="https://media1.tenor.com/m/sWkOaRAduFgAAAAC/gear-5-luffy-luffy-gear-5.gif" width="600"/>
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2Rwb2o0ZHNyOWYyYzQxZGZrdXByZ3hrd3hiZXNtaGI3eHlvdjV1ayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/PSZItNK8kdmSUiRi7l/giphy.gif" width="600"/>
 </p>
 
 > Something powerful is coming. Stay tuned. 👀
