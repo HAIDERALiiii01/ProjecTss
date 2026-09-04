@@ -65,7 +65,7 @@
   <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2Rwb2o0ZHNyOWYyYzQxZGZrdXByZ3hrd3hiZXNtaGI3eHlvdjV1ayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/PSZItNK8kdmSUiRi7l/giphy.gif" width="600"/>
 </p>
 
-> Something powerful is coming. Stay tuned. 👀
+> This is my Peak!
 
 ---
 
