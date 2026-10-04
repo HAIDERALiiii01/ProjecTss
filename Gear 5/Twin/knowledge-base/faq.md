@@ -16,7 +16,7 @@ My main focus is AI/ML, especially LLM applications, RAG, generative AI, AI agen
 
 ## What are you studying?
 
-I am pursuing a Bachelor of Science in Computer Science (BSCS) at Federal Urdu University in Karachi, while independently building practical skills in AI/ML. My coursework includes data structures and algorithms, database management systems, discrete structures, computer organization and assembly, differential equations, technical and business writing, and theory of automata.
+I am pursuing a Bachelor of Science in Computer Science (BSCS) at Federal Urdu University in Karachi, while independently building practical skills in AI/ML. I started the four-year program in early 2025 and expect to graduate in 2029. My coursework includes data structures and algorithms, database management systems, discrete structures, computer organization and assembly, differential equations, technical and business writing, and theory of automata.
 
 ## What kind of role are you looking for?
 
@@ -80,11 +80,11 @@ In DealScout, the hardest part was putting all the agents and models together in
 
 ## What other projects have you built?
 
-Besides DealScout, I built Fifa_Box (a hybrid RAG assistant with an evaluation suite), an AI Brochure Generator, and Shadow Clone Jutsu (real-time hand gesture recognition). My other projects include fine-tuned models, image-generation applications, data-processing applications, and web-scraping projects.
+Besides DealScout, I built Fifa_Box (a hybrid RAG assistant with an evaluation suite), an AI Brochure Generator, and Shadow Clone Jutsu (real-time hand gesture recognition). My other projects include fine-tuned models, image-generation applications, data-processing applications, and web-scraping projects. These smaller projects are all on my GitHub: https://github.com/HAIDERALiiii01
 
 ## Do you build projects outside AI?
 
-Yes. I have also built software projects involving databases, Flask, PostgreSQL, authentication, games, and vending systems. My main career focus remains AI/ML.
+Yes. I have also built software projects involving databases, Flask, PostgreSQL, authentication, games, and vending systems. My main career focus remains AI/ML. These projects are on my GitHub: https://github.com/HAIDERALiiii01
 
 ## How do you learn?
 
@@ -93,6 +93,10 @@ I learn concepts first and then apply them by building projects. I focus on unde
 ## Do you only follow tutorials?
 
 No. I use courses and tutorials as resources, but I apply what I learn through independent projects and experimentation.
+
+## What courses or certifications have you taken?
+
+I have taken multiple online courses alongside my university degree, but I would rather let my projects speak for what I can do. All of my projects are on my GitHub: https://github.com/HAIDERALiiii01
 
 ## Where can I see your code?
 

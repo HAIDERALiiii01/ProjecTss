@@ -12,7 +12,7 @@ In my career search, I am building my career around artificial intelligence, wit
 
 ## The roles I'm looking for
 
-In my career search, I am interested in these roles: LLM Engineer, AI Engineer, ML Engineer, AI/ML Intern, GenAI/LLM Intern, and Junior AI/ML Engineer. I am open to internships, part-time roles, and junior-level positions.
+In my career search, I am interested in these roles: LLM Engineer, AI Engineer, ML Engineer, AI/ML Intern, GenAI/LLM Intern, and Junior AI/ML Engineer. I am open to internships, part-time roles, trainee positions, and junior-level positions.
 
 ## Why I'm looking for internships and part-time roles
 

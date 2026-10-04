@@ -43,7 +43,7 @@ In the AI Brochure Generator, I stream the brochure into the interface instead o
 
 ## The Gradio interface
 
-In the AI Brochure Generator, I built the interface with Gradio. It has a company name input, a website URL input (the full URL including `https://`), a model-selection dropdown, and a live output area where the Markdown brochure is rendered. The app runs locally in the browser with `python main.py`.
+In the AI Brochure Generator, I built the interface with Gradio. It has a company name input, a website URL input (the full URL including `https://`), a model-selection dropdown, and a live output area where the Markdown brochure is rendered. The app runs locally in the browser.
 
 ## Limitations of the AI Brochure Generator
 
@@ -56,6 +56,6 @@ The AI Brochure Generator depends on the target website being accessible to the 
 - Application: Python, Gradio
 - Configuration: python-dotenv, environment variables for API keys
 
-## Links
+## Links to the AI Brochure Generator
 
-GitHub: see the link on my resume.
+- AI Brochure Generator GitHub: https://github.com/HAIDERALiiii01/ProjecTss/tree/main/Gear%203/Brochure_Generator(Ai_based)

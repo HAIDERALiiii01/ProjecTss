@@ -9,7 +9,7 @@ stack: Python, ChromaDB, BM25, OpenAI, LiteLLM, cross-encoder, pywebview, HTML/C
 
 ## What Fifa_Box is and why I built it
 
-Fifa_Box is a Retrieval-Augmented Generation (RAG) assistant for FIFA World Cup history that I built. It answers questions about winners, records, statistics, and iconic moments using a real knowledge base covering 93 years of World Cup history, from 1930 to 2022, instead of relying only on the language model's own knowledge.
+Fifa_Box is a Retrieval-Augmented Generation (RAG) assistant for FIFA World Cup history that I built. It answers questions about winners, records, statistics, and iconic moments using a real knowledge base covering every FIFA World Cup from 1930 to 2022 (22 tournaments), instead of relying only on the language model's own knowledge.
 
 I built it to give grounded answers: the system first retrieves relevant information from the knowledge base, then generates the answer from that retrieved context. I also built a desktop app around it, so the RAG system became a browsable World Cup archive with a built-in chat.
 
@@ -19,7 +19,7 @@ In Fifa_Box, the complete pipeline is: ingestion, then query rewriting, then hyb
 
 ## Knowledge base ingestion
 
-In Fifa_Box, I built an ingestion pipeline (`app/pro_implementation/ingest.py`) that loads the documents from the knowledge-base folder and prepares them for retrieval.
+In Fifa_Box, I built an ingestion pipeline that loads the knowledge-base documents and prepares them for retrieval.
 
 An LLM splits the documents into overlapping chunks, and each chunk contains a headline, a summary, and the original text. The chunks are embedded with OpenAI's `text-embedding-3-large` model and stored in a persistent ChromaDB collection. The ingestion has to be run again whenever documents are added or changed.
 
@@ -43,7 +43,7 @@ In Fifa_Box, the top reranked chunks are placed into the model's context, and th
 
 ## Evaluation of Fifa_Box
 
-I built a custom evaluation suite for Fifa_Box with 179 test cases. It scores retrieval quality with MRR, nDCG, and Precision@5, which came out at about 0.80. It scores answer quality with an LLM-as-judge on four criteria: accuracy, completeness, relevance, and faithfulness. The evaluation scripts and test set are in the `app/evaluation/` folder.
+I built a custom evaluation suite for Fifa_Box with 179 test cases. It scores retrieval quality with MRR, nDCG, and Precision@5, which came out at about 0.80. It scores answer quality with an LLM-as-judge on four criteria: accuracy, completeness, relevance, and faithfulness.
 
 ## The Fifa_Box desktop app
 
@@ -53,18 +53,6 @@ In Fifa_Box, I built the interface as a desktop application with `pywebview` and
 
 In Fifa_Box, there is no separate backend server. The pywebview desktop shell calls the `answer_question()` function directly, so the retrieval and generation pipeline runs in the same Python process as the desktop app. The whole application is the Python logic, the web frontend, the pywebview shell, the ChromaDB vector store, and the RAG pipeline in one process.
 
-## Fifa_Box project structure
-
-- `ui/main.py`: entry point that launches the desktop app.
-- `ui/web/`: the frontend (`index.html`, `css/style.css`, `js/main.js`).
-- `ui/data/`: `winners.json` and `moments.json` with the champions and curated moments.
-- `ui/assets/`: posters, GIFs, and galleries.
-- `app/pro_implementation/ingest.py`: ingestion, LLM chunking, embeddings, and ChromaDB construction.
-- `app/pro_implementation/answer.py`: query rewriting, hybrid retrieval, reranking, and answer generation.
-- `app/knowledge-base/`: the source documents.
-- `app/preprocessed_db/`: the persistent ChromaDB store generated during ingestion.
-- `app/evaluation/`: the evaluation scripts and test set.
-
 ## Technologies used in Fifa_Box
 
 - Retrieval: ChromaDB, OpenAI `text-embedding-3-large`, BM25 (`rank_bm25`), cross-encoder reranking (`ms-marco-MiniLM-L-6-v2`)
@@ -72,6 +60,7 @@ In Fifa_Box, there is no separate backend server. The pywebview desktop shell ca
 - Application: Python, pywebview, HTML, CSS, JavaScript
 - Supporting libraries: Pydantic, python-dotenv
 
-## Links
+## Links to Fifa_Box
 
-GitHub and demo: see the links on my resume.
+- Fifa_Box GitHub: https://github.com/HAIDERALiiii01/ProjecTss/tree/main/Gear%204/Fifa_Box
+- Fifa_Box demo: https://lnkd.in/p/dhmt4QtH

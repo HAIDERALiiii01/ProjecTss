@@ -46,7 +46,7 @@ I fine-tuned it with QLoRA, using 4-bit quantization and LoRA, trained with TRL 
 
 In DealScout, the Frontier Agent estimates prices with retrieval-augmented generation. It searches a ChromaDB product vector store for the five most similar products and gives their prices as context to an OpenAI model, which estimates the target product's value. This lets the system use comparable products as evidence.
 
-DealScout also keeps a persistent deal memory in memory.json. It stores previously found opportunities, including the product, current price, estimated value, deal URL, and calculated discount. The product vector store and the neural network weights are not in the repository because of their size, so they are generated or downloaded separately.
+DealScout also keeps a persistent deal memory stored in a JSON file. It stores previously found opportunities, including the product, current price, estimated value, deal URL, and calculated discount. The product vector store and the neural network weights are not in the repository because of their size, so they are generated or downloaded separately.
 
 ## The neural network (Neural Network Agent)
 
@@ -80,3 +80,8 @@ DealScout helped me understand how different AI techniques can be combined into 
 - Retrieval: ChromaDB, embeddings, similarity search
 - Infrastructure: Modal, Hugging Face, Google Colab, Weights & Biases
 - Application: Python, Gradio, ntfy, RSS with Feedparser
+
+## Links to DealScout
+
+- DealScout GitHub: https://github.com/HAIDERALiiii01/ProjecTss/tree/main/Gear%205/DealScout
+- DealScout demo: https://lnkd.in/p/dj5-79M6

@@ -1,7 +1,7 @@
 ---
 type: project
 name: Shadow Clone Jutsu
-aliases: [Shadow_Clone_jutsu]
+aliases: [Shadow_Clone_Jujutsu, Shadow_Clone_jutsu]
 topics: [computer-vision, gesture-recognition, real-time, mediapipe, tflite]
 stack: Python, OpenCV, MediaPipe, TensorFlow, TensorFlow Lite, Scikit-learn, NumPy, Pandas
 ---
@@ -10,7 +10,7 @@ stack: Python, OpenCV, MediaPipe, TensorFlow, TensorFlow Lite, Scikit-learn, Num
 
 ## What Shadow Clone Jutsu is and why I built it
 
-Shadow Clone Jutsu is a real-time computer vision project I built, inspired by Naruto. The repository is named Shadow_Clone_jutsu. It uses a webcam to detect my hand gestures live. When I perform the correct hand sign, a smoke effect appears and shadow clones of me are rendered on screen, with audio effects triggered at the same moment.
+Shadow Clone Jutsu is a real-time computer vision project I built, inspired by Naruto. The repository folder is named Shadow_Clone_Jujutsu. It uses a webcam to detect my hand gestures live. When I perform the correct hand sign, a smoke effect appears and shadow clones of me are rendered on screen, with audio effects triggered at the same moment.
 
 The hand sign that triggers the effect is the Shadow Clone Jutsu hand seal from the Naruto anime, which is where the idea came from.
 
@@ -24,21 +24,21 @@ The gesture pipeline is: webcam, then hand detection, then hand landmarks, then 
 
 ## Hand detection with MediaPipe
 
-In Shadow Clone Jutsu, I use MediaPipe's hand landmark model (`hand_landmark.task`) to detect my hand and extract its landmarks. The landmark coordinates are the features that the gesture recognition model uses.
+In Shadow Clone Jutsu, I use MediaPipe's hand landmark model to detect my hand and extract its landmarks. The landmark coordinates are the features that the gesture recognition model uses.
 
 ## The gesture recognition model
 
-In Shadow Clone Jutsu, I trained a custom classifier to recognize the hand signs. It runs as a TensorFlow Lite model on MediaPipe hand landmarks. Before the landmarks reach the model, they are scaled with the saved feature scaler (`scaler.pkl`), and the gesture class labels are stored in `encoder.pkl`. The model outputs a gesture class, which decides whether the required hand sign has been performed.
+In Shadow Clone Jutsu, I trained a custom classifier to recognize the hand signs. It runs as a TensorFlow Lite model on MediaPipe hand landmarks. Before the landmarks reach the model, they are scaled with a saved feature scaler, and the gesture class labels are stored in a saved label encoder. The model outputs a gesture class, which decides whether the required hand sign has been performed.
 
 ## The dataset and training
 
-In Shadow Clone Jutsu, I collected and labeled the gesture dataset myself, about 2,000 samples. I built a recording tool (`rec.py`) that captures hand landmark data for each gesture and saves it to `datasets.csv`. I then trained the model on that data (`training.py`), including feature scaling, and saved the scaler so the same transformation is applied during real-time recognition. The trained model is exported as TensorFlow Lite for the live application, and `testing.py` tests it.
+In Shadow Clone Jutsu, I collected and labeled the gesture dataset myself, about 2,000 samples. I built a recording tool that captures hand landmark data for each gesture and saves it to a CSV file. I then trained the model on that data, including feature scaling, and saved the scaler so the same transformation is applied during real-time recognition. The trained model is exported as TensorFlow Lite for the live application.
 
 The system is extensible. To add a new hand sign, I record new landmark data with the recording tool, add the label, and retrain on the updated dataset. Retraining is only needed for new gestures or an updated dataset, since the trained model is already included.
 
 ## Person segmentation
 
-In Shadow Clone Jutsu, I use a TensorFlow Lite segmentation model, `selfie_multiclass_256x256.tflite`, to separate the person from the webcam background (`seg.py`). Isolating the person lets the app apply the visual effect to them and not to the whole frame.
+In Shadow Clone Jutsu, I use a TensorFlow Lite selfie segmentation model (`selfie_multiclass_256x256`) to separate the person from the webcam background. Isolating the person lets the app apply the visual effect to them and not to the whole frame.
 
 ## The shadow clone effect
 
@@ -56,16 +56,6 @@ I tested the system live with my webcam. While running, the model's confidence f
 
 The hardest part of Shadow Clone Jutsu was collecting the dataset. The model itself was manageable, but there was no ready-made dataset for this hand sign, so I had to record and label all the gesture data myself with my own recording tool.
 
-## Project structure
-
-- `main.py`: runs the application (`python main.py`, webcam required).
-- `rec.py`: records hand gesture data.
-- `seg.py`: person segmentation.
-- `training.py`: trains the gesture recognition model.
-- `testing.py`: tests the trained model.
-
-The trained model, scaler, gesture labels, MediaPipe hand landmark model, segmentation model, and the visual and audio assets work together to make the complete app.
-
 ## Technologies used in Shadow Clone Jutsu
 
 - Computer vision: OpenCV, MediaPipe, TensorFlow Lite
@@ -73,6 +63,7 @@ The trained model, scaler, gesture labels, MediaPipe hand landmark model, segmen
 - Data processing: NumPy, Pandas
 - Models: MediaPipe hand landmark model, custom TFLite gesture model, TFLite person segmentation model
 
-## Links
+## Links to Shadow Clone Jutsu
 
-GitHub and demo: see the links on my resume.
+- Shadow Clone Jutsu GitHub: https://github.com/HAIDERALiiii01/ProjecTss/tree/main/Gear%204/Shadow_Clone_Jujutsu
+- Shadow Clone Jutsu demo: https://lnkd.in/p/dWCsmPjB
