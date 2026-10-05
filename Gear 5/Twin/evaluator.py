@@ -2,7 +2,6 @@ import gradio as gr
 import pandas as pd
 from collections import defaultdict
 from dotenv import load_dotenv
-
 from evaluation.eval import evaluate_all_retrieval, evaluate_all_answers
 
 load_dotenv(override=True)
@@ -76,8 +75,14 @@ def format_metric_html(
     """
 
 
+def empty_result(message: str, columns: list[str]):
+    """Shown when there are no tests to run (e.g. tests.jsonl is empty or missing keywords)."""
+    html = f"<div style='padding: 20px; text-align: center; color: #999;'>{message}</div>"
+    return html, pd.DataFrame(columns=columns)
+
+
 def run_retrieval_evaluation(progress=gr.Progress()):
-    """Run retrieval evaluation and yield updates."""
+    """Run retrieval evaluation and return the summary + per-category chart data."""
     total_mrr = 0.0
     total_ndcg = 0.0
     total_coverage = 0.0
@@ -94,6 +99,12 @@ def run_retrieval_evaluation(progress=gr.Progress()):
 
         # Update progress bar only
         progress(prog_value, desc=f"Evaluating test {count}...")
+
+    if count == 0:
+        return empty_result(
+            "No tests with keywords found. Add some to evaluation/tests.jsonl.",
+            ["Category", "Average MRR"],
+        )
 
     # Calculate final averages
     avg_mrr = total_mrr / count
@@ -124,7 +135,7 @@ def run_retrieval_evaluation(progress=gr.Progress()):
 
 
 def run_answer_evaluation(progress=gr.Progress()):
-    """Run answer evaluation and yield updates (async)."""
+    """Run answer evaluation and return the summary + per-category chart data."""
     total_accuracy = 0.0
     total_completeness = 0.0
     total_relevance = 0.0
@@ -141,6 +152,12 @@ def run_answer_evaluation(progress=gr.Progress()):
 
         # Update progress bar only
         progress(prog_value, desc=f"Evaluating test {count}...")
+
+    if count == 0:
+        return empty_result(
+            "No tests found. Add some to evaluation/tests.jsonl.",
+            ["Category", "Average Accuracy"],
+        )
 
     # Calculate final averages
     avg_accuracy = total_accuracy / count
@@ -174,12 +191,13 @@ def main():
     """Launch the Gradio evaluation app."""
     theme = gr.themes.Soft(font=["Inter", "system-ui", "sans-serif"])
 
-    with gr.Blocks(title="RAG Evaluation Dashboard", theme=theme) as app:
-        gr.Markdown("# 📊 RAG Evaluation Dashboard")
-        gr.Markdown("Evaluate retrieval and answer quality for the Insurellm RAG system")
+    with gr.Blocks(title="Digital Twin Evaluation Dashboard") as app:
+        gr.Markdown("# 📊 Digital Twin Evaluation Dashboard")
+        gr.Markdown("Evaluate retrieval and answer quality for the digital twin's RAG pipeline")
 
         # RETRIEVAL SECTION
         gr.Markdown("## 🔍 Retrieval Evaluation")
+        gr.Markdown("Tests without keywords (unanswerable / off-topic) are skipped here.")
 
         retrieval_button = gr.Button("Run Evaluation", variant="primary", size="lg")
 
@@ -200,6 +218,7 @@ def main():
 
         # ANSWERING SECTION
         gr.Markdown("## 💬 Answer Evaluation")
+        gr.Markdown("Runs the full twin (rewrite, retrieval, answer) with tool notifications disabled.")
 
         answer_button = gr.Button("Run Evaluation", variant="primary", size="lg")
 
@@ -229,7 +248,8 @@ def main():
             outputs=[answer_metrics, answer_chart],
         )
 
-    app.launch(inbrowser=True)
+    # theme goes in launch() in your Gradio version (same as app.py)
+    app.launch(inbrowser=True, theme=theme)
 
 
 if __name__ == "__main__":

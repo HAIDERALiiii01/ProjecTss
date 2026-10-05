@@ -1,222 +1,178 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-from chromadb import PersistentClient
-from litellm import completion
-from pydantic import BaseModel, Field
-from pathlib import Path
-from sentence_transformers import CrossEncoder
-# from tenacity import retry, wait_exponential
+"""Shared RAG logic for the digital twin.
 
+Both app.py (production) and evaluation/eval.py import from here, so the eval
+always measures exactly the code path visitors hit.
+"""
+
+import json
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from openai import OpenAI
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+
+from context import TWIN_SYSTEM_PROMPT
+from tools import tools, handle_tool_calls
 
 load_dotenv(override=True)
 
-MODEL = "openai/gpt-4.1-nano"
-# MODEL = "groq/openai/gpt-oss-120b"
-# reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")
-reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
-DB_NAME = str(Path(__file__).parent.parent / "preprocessed_db")
-KNOWLEDGE_BASE_PATH = Path(__file__).parent.parent / "knowledge-base"
-SUMMARIES_PATH = Path(__file__).parent.parent / "summaries"
-
-collection_name = "docs"
-embedding_model = "text-embedding-3-large"
-# wait = wait_exponential(multiplier=1, min=10, max=240)
+MODEL_NAME = "gpt-5.4-mini"      # answers the visitor
+REWRITE_MODEL = "gpt-4.1-nano"   # cheap model that rewrites the query before retrieval
+DB_NAME = str(Path(__file__).parent / "vector_db")  # absolute path, independent of the working directory
+MAX_TOOL_ROUNDS = 5              # safety net against endless tool-call loops
+DEBUG = True
 
 openai = OpenAI()
 
-chroma = PersistentClient(path=DB_NAME)
-collection = chroma.get_or_create_collection(collection_name)
+# ---------------------------------------------------------------------------
+# Retrieval (LangChain + Chroma)
+# ---------------------------------------------------------------------------
+embeddings = OpenAIEmbeddings(model="text-embedding-3-large")  # must match ingest.py
+vectorstore = Chroma(persist_directory=DB_NAME, embedding_function=embeddings)
 
-RETRIEVAL_K = 20
-FINAL_K = 10
-
-SYSTEM_PROMPT = """
-You are a knowledgeable, friendly assistant representing the company Insurellm.
-You are chatting with a user about Insurellm.
-Your answer will be evaluated for accuracy, relevance and completeness, so make sure it only answers the question and fully answers it.
-If you don't know the answer, say so.
-For context, here are specific extracts from the Knowledge Base that might be directly relevant to the user's question:
-{context}
-
-With this context, please answer the user's question. Be accurate, relevant and complete.
-"""
+# MMR: fetch 20 candidates, keep the 5 that are relevant AND different from each other
+retriever = vectorstore.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 5, "fetch_k": 20, "lambda_mult": 0.6},
+)
 
 
-class Result(BaseModel):
-    page_content: str
-    metadata: dict
+def as_text(content):
+    # Gradio gives either a string or a list of parts like [{"type": "text", "text": "..."}]
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return " ".join(
+            part.get("text", "") if isinstance(part, dict) else str(part)
+            for part in content
+        ).strip()
+    return str(content)
 
 
-class RankOrder(BaseModel):
-    order: list[int] = Field(
-        description="The order of relevance of chunks, from most relevant to least relevant, by chunk id number"
-    )
-
-# def rerank(question, chunks):
-#     n = len(chunks)
-
-#     system_prompt = """
-# You are a document re-ranker.
-
-# You will receive:
-# 1. A user's question.
-# 2. A list of document chunks.
-
-# Your job is to rank the chunks from MOST relevant to LEAST relevant.
-
-# Rules:
-# - There are EXACTLY N chunks.
-# - The only valid chunk IDs are those provided.
-# - Return EVERY chunk ID exactly once.
-# - Do NOT invent new IDs.
-# - Do NOT skip IDs.
-# - Do NOT repeat IDs.
-# - Reply ONLY with valid JSON matching the schema.
-# """
-
-#     user_prompt = f"""
-# The user asked:
-
-# {question}
-
-# There are exactly {n} chunks.
-
-# The ONLY valid chunk IDs are:
-
-# {list(range(1, n + 1))}
-
-# Rank ALL chunk IDs from most relevant to least relevant.
-
-# Here are the chunks:
-
-# """
-
-#     for index, chunk in enumerate(chunks, start=1):
-#         user_prompt += (
-#             f"\n========== CHUNK {index} ==========\n"
-#             f"{chunk.page_content}\n"
-#         )
-
-#     user_prompt += """
-# Remember:
-# - Return all IDs exactly once.
-# - Do NOT invent IDs.
-# - Do NOT omit IDs.
-# - Do NOT duplicate IDs.
-# """
-
-#     messages = [
-#         {"role": "system", "content": system_prompt.replace("N", str(n))},
-#         {"role": "user", "content": user_prompt},
-#     ]
-
-#     response = completion(
-#         model=MODEL,
-#         messages=messages,
-#         response_format=RankOrder,
-#     )
-
-#     reply = response.choices[0].message.content
-#     order = RankOrder.model_validate_json(reply).order
-
-#     print(f"\nRetrieved chunks : {n}")
-#     print(f"LLM returned     : {order}")
-
-#     expected = set(range(1, n + 1))
-#     received = set(order)
-
-#     if len(order) != n:
-#         print("❌ Invalid reranking: wrong number of IDs.")
-#         print("Using original retrieval order.")
-#         return chunks
-
-#     if received != expected:
-#         missing = sorted(expected - received)
-#         extra = sorted(received - expected)
-
-#         print("❌ Invalid reranking.")
-#         print("Missing IDs :", missing)
-#         print("Extra IDs   :", extra)
-#         print("Using original retrieval order.")
-
-#         return chunks
-
-#     return [chunks[i - 1] for i in order]
+def clean_history(history):
+    # Gradio may attach extra keys (metadata, options); the OpenAI API only needs role and content
+    return [{"role": m["role"], "content": as_text(m["content"])} for m in history]
 
 
+def rewrite_query(question, history=None):
+    """Turn the visitor's question into a short, standalone query for the knowledge base."""
+    history = history or []
+    transcript = "\n".join(
+        f"{m['role']}: {as_text(m['content'])[:500]}" for m in history[-6:]
+    ) or "(no previous messages)"
 
-def rerank(question, chunks):
-    pairs = [(question, c.page_content) for c in chunks]
-    scores = reranker.predict(pairs)
-    ranked = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
-    return [c for c, _ in ranked]
+    prompt = f"""
+You are helping a digital twin look up information in a knowledge base about one person's
+career, projects, skills, education and background.
 
-def make_rag_messages(question, history, chunks):
-    context = "\n\n".join(
-        f"Extract from {chunk.metadata['source']}:\n{chunk.page_content}" for chunk in chunks
-    )
-    system_prompt = SYSTEM_PROMPT.format(context=context)
-    return (
-        [{"role": "system", "content": system_prompt}]
-        + history
-        + [{"role": "user", "content": question}]
-    )
+Conversation so far:
+{transcript}
 
-
-# @retry(wait=wait)
-def rewrite_query(question, history=[]):
-    """Rewrite the user's question to be a more specific question that is more likely to surface relevant content in the Knowledge Base."""
-    message = f"""
-You are in a conversation with a user, answering questions about the company Insurellm.
-You are about to look up information in a Knowledge Base to answer the user's question.
-
-This is the history of your conversation so far with the user:
-{history}
-
-And this is the user's current question:
+The visitor's latest question:
 {question}
 
-Respond only with a short, refined question that you will use to search the Knowledge Base.
-It should be a VERY short specific question most likely to surface content. Focus on the question details.
-IMPORTANT: Respond ONLY with the precise knowledgebase query, nothing else.
+Rewrite the latest question as a short, standalone search query for the knowledge base.
+- Resolve references like "it", "that project" or "the first one" using the conversation.
+- Keep project names, technologies and other specific terms exactly as written.
+- If the question is already standalone, keep it close to the original.
+- Do NOT answer the question.
+
+Respond ONLY with the query, nothing else.
 """
-    response = completion(model=MODEL, messages=[{"role": "system", "content": message}])
-    return response.choices[0].message.content
+    try:
+        response = openai.chat.completions.create(
+            model=REWRITE_MODEL,
+            temperature=0,
+            messages=[{"role": "system", "content": prompt}],
+        )
+        return response.choices[0].message.content.strip() or question
+    except Exception as e:
+        print(f"Query rewrite failed, falling back to the original question: {e}")
+        return question
 
 
-def merge_chunks(chunks, reranked):
-    merged = chunks[:]
-    existing = [chunk.page_content for chunk in chunks]
-    for chunk in reranked:
-        if chunk.page_content not in existing:
-            merged.append(chunk)
-    return merged
+def fetch_context(question, history=None):
+    """Rewrite the question, then return the retrieved chunks (a list of Documents)."""
+    query = rewrite_query(question, history)
+    docs = retriever.invoke(query)
+
+    if DEBUG:
+        print(f"\n{'=' * 60}\nORIGINAL:  {question}\nREWRITTEN: {query}\n{'=' * 60}")
+        for i, doc in enumerate(docs, 1):
+            source = str(doc.metadata.get("source", "?")).replace("\\", "/").split("/")[-1]
+            section = doc.metadata.get("h2") or doc.metadata.get("h1") or "-"
+            print(f"\n[{i}] {source} | {section} | {len(doc.page_content)} chars")
+            print(doc.page_content)
+        print("=" * 60, flush=True)
+
+    return docs
 
 
-def fetch_context_unranked(question):
-    query = openai.embeddings.create(model=embedding_model, input=[question]).data[0].embedding
-    results = collection.query(query_embeddings=[query], n_results=RETRIEVAL_K)
-    chunks = []
-    for result in zip(results["documents"][0], results["metadatas"][0]):
-        chunks.append(Result(page_content=result[0], metadata=result[1]))
-    return chunks
+def format_context(docs):
+    parts = []
+    for doc in docs:
+        source = str(doc.metadata.get("source", "knowledge base")).replace("\\", "/").split("/")[-1]
+        parts.append(f"Source: {source}\n{doc.page_content}")
+    return "\n\n---\n\n".join(parts)
 
 
-def fetch_context(original_question):
-    rewritten_question = rewrite_query(original_question)
-    chunks1 = fetch_context_unranked(original_question)
-    chunks2 = fetch_context_unranked(rewritten_question)
-    chunks = merge_chunks(chunks1, chunks2)
-    reranked = rerank(original_question, chunks)
-    return reranked[:FINAL_K]
+def build_system_prompt(context):
+    return (
+        TWIN_SYSTEM_PROMPT
+        + f"""
+
+# Retrieved knowledge
+
+The excerpts below were retrieved from the knowledge base for the visitor's latest question.
+They are your source of truth. Answer from them in the first person, as the person you represent.
+Only call the record_unknown_question tool if the excerpts contain nothing relevant to the question.
+If you can answer even part of it, answer that part and do not call the tool. Never guess beyond the excerpts.
+
+{context}
+"""
+    )
 
 
-# @retry(wait=wait)
-def answer_question(question: str, history: list[dict] = []) -> tuple[str, list]:
+# ---------------------------------------------------------------------------
+# Answering
+# ---------------------------------------------------------------------------
+def dry_run_tool_calls(tool_calls):
+    """Same shape as handle_tool_calls, but sends no notifications (used by the eval)."""
+    results = []
+    for tool_call in tool_calls:
+        print(f"[dry run] tool call: {tool_call.function.name} {tool_call.function.arguments}", flush=True)
+        results.append(
+            {"role": "tool", "content": json.dumps("OK"), "tool_call_id": tool_call.id}
+        )
+    return results
+
+
+def answer_question(question, history=None, notify=True):
+    """Answer a visitor question. Returns (answer_text, retrieved_docs).
+
+    notify=False keeps the tools visible to the model but stubs them, so evaluation
+    runs never send real ntfy alerts.
     """
-    Answer a question using RAG and return the answer and the retrieved context
-    """
-    chunks = fetch_context(question)
-    messages = make_rag_messages(question, history, chunks)
-    response = completion(model=MODEL, messages=messages)
-    return response.choices[0].message.content, chunks
+    history = history or []
+    docs = fetch_context(question, history)  # once per user turn, not per tool iteration
+
+    messages = (
+        [{"role": "system", "content": build_system_prompt(format_context(docs))}]
+        + clean_history(history)
+        + [{"role": "user", "content": as_text(question)}]
+    )
+    run_tools = handle_tool_calls if notify else dry_run_tool_calls
+
+    response = openai.chat.completions.create(model=MODEL_NAME, messages=messages, tools=tools)
+    rounds = 0
+    while response.choices[0].finish_reason == "tool_calls" and rounds < MAX_TOOL_ROUNDS:
+        assistant_message = response.choices[0].message
+        results = run_tools(assistant_message.tool_calls)
+        messages.append(assistant_message)
+        messages.extend(results)
+        response = openai.chat.completions.create(model=MODEL_NAME, messages=messages, tools=tools)
+        rounds += 1
+
+    return response.choices[0].message.content or "", docs
