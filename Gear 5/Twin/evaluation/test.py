@@ -1,48 +1,35 @@
 import json
 from pathlib import Path
+
 from pydantic import BaseModel, Field
 
 TEST_FILE = str(Path(__file__).parent / "tests.jsonl")
 
 
 class TestQuestion(BaseModel):
-    """A test question with expected keywords and reference answer."""
+    """A single evaluation test case for the digital twin."""
 
-    question: str = Field(description="The question to ask the twin")
+    question: str = Field(description="The question a visitor would ask the twin")
     keywords: list[str] = Field(
         default_factory=list,
-        description=(
-            "Keywords that must appear word-for-word in the retrieved chunks. "
-            "Leave empty for unanswerable / off-topic questions (they are skipped in retrieval metrics)."
-        ),
+        description="Diagnostic keywords that should appear in retrieved chunks (empty = unanswerable / off-topic)",
     )
-    reference_answer: str = Field(
-        description="The reference answer. For unanswerable questions, say the information is not available."
-    )
-    category: str = Field(
-        description=(
-            "Question category, e.g. direct_fact, project_detail, spanning, follow_up, unanswerable, off_topic"
-        )
-    )
-    history: list[dict] = Field(
+    reference_answer: str = Field(description="Reference answer (first person, as the twin would say it)")
+    category: str = Field(description="Question category")
+    history: list[dict] = Field(default_factory=list, description="Optional prior chat turns")
+    gold_sections: list[list[str]] = Field(
         default_factory=list,
-        description=(
-            "Optional earlier turns for follow-up questions, as "
-            '[{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]'
-        ),
+        description='Gold chunks as groups of alternatives, e.g. [["faq.md::Who are you?", "story.md::Who I am"]]. '
+        "Each inner list is one information need; retrieving ANY section in it satisfies the need.",
     )
 
 
 def load_tests(path: str = TEST_FILE) -> list[TestQuestion]:
-    """Load test questions from a JSONL file (one JSON object per line, blank lines ignored)."""
+    """Load test questions from a JSONL file."""
     tests = []
     with open(path, "r", encoding="utf-8") as f:
-        for line_number, line in enumerate(f, start=1):
+        for line in f:
             line = line.strip()
-            if not line:
-                continue
-            try:
+            if line:
                 tests.append(TestQuestion(**json.loads(line)))
-            except Exception as e:
-                raise ValueError(f"Bad test on line {line_number} of {path}: {e}") from e
     return tests
