@@ -1,7 +1,7 @@
 # 🤖 AI Resume Twin
 
 <p align="center">
-  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExenV0NHFkZWttbXU1enpzbjJoYms4cGdsaG44ZXQyZmt2ZXlsYWg0aiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/8f0NMFGldGTARlQxmc/giphy.gif" alt="AI Resume Twin" width="800"/>
+  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzdjbG10MTN1NWJ6NWg0YTRpbnFzenozdHJmcnZrcG1nY204aWlkMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l36kU80xPf0ojG0Erg/giphy.gif" alt="AI Resume Twin" width="800"/>
 </p>
 
 <p align="center">
