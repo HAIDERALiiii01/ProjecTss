@@ -22,6 +22,8 @@ MODEL_NAME = "gpt-5.4-mini"      # answers the visitor
 REWRITE_MODEL = "gpt-4.1-nano"   # cheap model that rewrites the query before retrieval
 DB_NAME = str(Path(__file__).parent / "vector_db")  # absolute path, independent of the working directory
 MAX_TOOL_ROUNDS = 5              # safety net against endless tool-call loops
+RETRIEVAL_K = 5                  # chunks handed to the model (evaluation/eval.py reads this too; try 8 for broad questions)
+FETCH_K = 20                     # MMR candidate pool
 DEBUG = True
 
 openai = OpenAI()
@@ -32,10 +34,10 @@ openai = OpenAI()
 embeddings = OpenAIEmbeddings(model="text-embedding-3-large")  # must match ingest.py
 vectorstore = Chroma(persist_directory=DB_NAME, embedding_function=embeddings)
 
-# MMR: fetch 20 candidates, keep the 5 that are relevant AND different from each other
+# MMR: fetch FETCH_K candidates, keep the RETRIEVAL_K that are relevant AND different from each other
 retriever = vectorstore.as_retriever(
     search_type="mmr",
-    search_kwargs={"k": 5, "fetch_k": 20, "lambda_mult": 0.6},
+    search_kwargs={"k": RETRIEVAL_K, "fetch_k": FETCH_K, "lambda_mult": 0.6},
 )
 
 

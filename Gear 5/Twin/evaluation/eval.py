@@ -51,7 +51,7 @@ litellm.drop_params = True  # some models reject temperature=0 etc.; drop unsupp
 # The judge should be at least as strong as the model that writes the answers. Override with JUDGE_MODEL.
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", "gpt-5.4-mini")
 JUDGE_TEMPERATURE = 0.0
-RETRIEVAL_K = 5  # the twin retrieves 5 chunks (see answer.py)
+RETRIEVAL_K = getattr(twin_module, "RETRIEVAL_K", 5)  # chunks the twin retrieves (defined in answer.py)
 MAX_WORKERS = int(os.getenv("EVAL_MAX_WORKERS", "4"))
 JUDGE_RETRIES = 3
 
@@ -83,7 +83,7 @@ class RetrievalEval(BaseModel):
     relevance_grades: list[int] = Field(default_factory=list, description="LLM grade per retrieved chunk, in order")
     grading: str = Field(default="llm", description="'llm' or 'keyword' (fallback when LLM grading is off)")
     # Gold labels (objective cross-check; None when the test has no gold_sections)
-    recall_at_k: Optional[float] = Field(default=None, description="Fraction of gold information needs covered")
+    recall_at_k: float = Field(default=0.0, description="Fraction of gold information needs covered (keyword recall if a test has no gold_sections)")
     gold_mrr: Optional[float] = Field(default=None, description="Reciprocal rank of first gold chunk")
     # Keywords (diagnostic only)
     keywords_found: int
@@ -127,10 +127,13 @@ class AnswerEval(AnswerJudgement):
 
 class FullResult(BaseModel):
     test: TestQuestion
+    category: str
+    question: str
     retrieval: RetrievalEval
-    answer: AnswerEval
+    answer_eval: AnswerJudgement
+    faithfulness: FaithfulnessJudgement
     generated_answer: str
-    seconds: float
+    elapsed_seconds: float
 
 
 # ----------------------------------------------------------------------------------------------
@@ -274,8 +277,9 @@ def score_retrieval(test: TestQuestion, docs: list, k: int = RETRIEVAL_K, use_ll
     total = len(test.keywords)
     coverage = found / total * 100 if total else 0.0
 
-    # Gold labels: objective recall + MRR
-    recall = gold_mrr = None
+    # Gold labels: objective recall + MRR (keyword recall as the fallback when a test has no gold)
+    recall = (found / total) if total else 0.0
+    gold_mrr = None
     if test.gold_sections:
         need_hit = [any(chunk_matches_section(d, s) for d in top for s in group) for group in test.gold_sections]
         recall = sum(need_hit) / len(need_hit)
@@ -322,42 +326,46 @@ def evaluate_retrieval(test: TestQuestion, k: int = RETRIEVAL_K, use_llm: bool =
 _warned_no_prompt = False
 
 
-def _twin_prompt_text() -> str:
-    """The twin's system prompt (resume + personal summary). Needed so faithfulness doesn't flag grounded claims."""
+def _judge_context(docs: list) -> str:
+    """What the twin actually saw: persona + resume + the retrieved excerpts, built exactly as answer.py builds its prompt."""
     global _warned_no_prompt
-    for name in ("SYSTEM_PROMPT", "system_prompt", "PERSONA", "persona_prompt"):
+    build = getattr(twin_module, "build_system_prompt", None)
+    fmt = getattr(twin_module, "format_context", None)
+    if callable(build) and callable(fmt):
+        try:
+            return "THE FULL SYSTEM PROMPT THE TWIN SAW (persona, resume, retrieved excerpts):\n" + build(fmt(docs))
+        except Exception:
+            pass
+    chunks_text = "\n\n".join(f"[Chunk {i}]\n{d.page_content}" for i, d in enumerate(docs, start=1)) or "(no chunks retrieved)"
+    persona = ""
+    for name in ("TWIN_SYSTEM_PROMPT", "SYSTEM_PROMPT", "system_prompt"):
         value = getattr(twin_module, name, None)
         if isinstance(value, str) and value.strip():
-            return value
-    for name in ("build_system_prompt", "get_system_prompt"):
-        fn = getattr(twin_module, name, None)
-        if callable(fn):
-            try:
-                value = fn()
-                if isinstance(value, str) and value.strip():
-                    return value
-            except Exception:
-                pass
-    if not _warned_no_prompt:
+            persona = value
+            break
+    if not persona and not _warned_no_prompt:
         _warned_no_prompt = True
-        print("[eval] WARNING: twin system prompt not found in answer.py (looked for SYSTEM_PROMPT / build_system_prompt). "
-              "Faithfulness will only see retrieved chunks, so facts grounded in the prompt may be flagged.")
-    return ""
+        print("[eval] WARNING: twin system prompt not found in answer.py; judges will only see the retrieved chunks.")
+    return (f"TWIN SYSTEM PROMPT (persona and resume):\n{persona}\n\n" if persona else "") + f"RETRIEVED CHUNKS:\n{chunks_text}"
 
 
-def judge_answer(test: TestQuestion, generated_answer: str) -> AnswerJudgement:
+def judge_answer(test: TestQuestion, generated_answer: str, docs: list) -> AnswerJudgement:
     messages = [
         {
             "role": "system",
             "content": (
                 "You are an expert evaluator assessing answers given by a digital twin of a person, speaking in the first "
                 "person about their career, projects, skills and background. Compare the generated answer to the reference "
-                "answer. Do not penalize friendly tone or markdown styling. Reserve 5/5 for answers with nothing to improve."
+                "answer, using the context the twin had as a second source of truth. Do not penalize friendly tone or "
+                "markdown styling. Reserve 5/5 for answers with nothing to improve."
             ),
         },
         {
             "role": "user",
-            "content": f"""Question:
+            "content": f"""Context the twin had available:
+{_judge_context(docs)}
+
+Question:
 {test.question}
 
 Generated Answer:
@@ -367,7 +375,7 @@ Reference Answer:
 {test.reference_answer}
 
 Evaluate the generated answer on three separate dimensions:
-1. Accuracy: are the facts correct compared to the reference? A wrong or invented core fact scores 1. A missing detail does NOT lower accuracy.
+1. Accuracy: are the facts correct? Use the reference answer as the main guide, but the context above is also a source of truth: a detail that is NOT in the reference but IS stated in the context is correct, not invented. A claim that contradicts the reference or the context, or appears in neither, is an error. A wrong or invented core fact scores 1; a small unsupported detail scores 3 or 4. A missing detail does NOT lower accuracy.
 2. Completeness: does it give all the IMPORTANT information needed to answer the question? Do not require every incidental detail of the reference.
 3. Relevance: does it directly answer the question asked? Brief styling or a one-line pointer to related work is fine; unrelated content is not.
 
@@ -380,9 +388,6 @@ Give concise feedback and scores from 1 (very poor) to 5 (ideal) for each dimens
 
 
 def judge_faithfulness(test: TestQuestion, generated_answer: str, docs: list) -> FaithfulnessJudgement:
-    chunks_text = "\n\n".join(f"[Chunk {i}]\n{d.page_content}" for i, d in enumerate(docs, start=1)) or "(no chunks retrieved)"
-    prompt_text = _twin_prompt_text()
-    context = (f"TWIN SYSTEM PROMPT (persona and resume):\n{prompt_text}\n\n" if prompt_text else "") + f"RETRIEVED CHUNKS:\n{chunks_text}"
     messages = [
         {
             "role": "system",
@@ -394,7 +399,7 @@ def judge_faithfulness(test: TestQuestion, generated_answer: str, docs: list) ->
         {
             "role": "user",
             "content": f"""Context available to the twin:
-{context}
+{_judge_context(docs)}
 
 Question:
 {test.question}
@@ -414,17 +419,16 @@ def evaluate_full(test: TestQuestion, k: int = RETRIEVAL_K, use_llm_relevance: b
     t0 = time.perf_counter()
     # notify=False: tools are stubbed, so no real ntfy alerts are sent during evaluation
     generated_answer, docs = answer_question(test.question, test.history, notify=False)
-    retrieval = score_retrieval(test, docs, k, use_llm_relevance) if test.keywords else _empty_retrieval(test, docs)
-    judgement = judge_answer(test, generated_answer)
+    retrieval = score_retrieval(test, docs, k, use_llm_relevance) if test.keywords else _empty_retrieval(docs)
+    judgement = judge_answer(test, generated_answer, docs)
     faith = judge_faithfulness(test, generated_answer, docs)
-    answer = AnswerEval(
-        **judgement.model_dump(), faithfulness=faith.faithfulness, faithfulness_feedback=faith.feedback
+    return FullResult(
+        test=test, category=test.category, question=test.question, retrieval=retrieval, answer_eval=judgement,
+        faithfulness=faith, generated_answer=generated_answer, elapsed_seconds=time.perf_counter() - t0,
     )
-    return FullResult(test=test, retrieval=retrieval, answer=answer, generated_answer=generated_answer,
-                      seconds=time.perf_counter() - t0)
 
 
-def _empty_retrieval(test: TestQuestion, docs: list) -> RetrievalEval:
+def _empty_retrieval(docs: list) -> RetrievalEval:
     return RetrievalEval(mrr=0.0, ndcg=0.0, precision_at_k=0.0, relevance_grades=[], grading="skipped",
                          keywords_found=0, total_keywords=0, keyword_coverage=0.0,
                          retrieved_sections=[chunk_header(d) for d in docs[:RETRIEVAL_K]])
@@ -433,7 +437,7 @@ def _empty_retrieval(test: TestQuestion, docs: list) -> RetrievalEval:
 def evaluate_answer(test: TestQuestion) -> tuple[AnswerEval, str, list]:
     """Dashboard-compatible: (AnswerEval, generated_answer, retrieved_docs)."""
     generated_answer, docs = answer_question(test.question, test.history, notify=False)
-    judgement = judge_answer(test, generated_answer)
+    judgement = judge_answer(test, generated_answer, docs)
     faith = judge_faithfulness(test, generated_answer, docs)
     result = AnswerEval(**judgement.model_dump(), faithfulness=faith.faithfulness, faithfulness_feedback=faith.feedback)
     return result, generated_answer, docs
@@ -464,10 +468,10 @@ def _run_parallel(tests: list[TestQuestion], fn: Callable[[TestQuestion], object
             yield test, result, done / total
 
 
-def evaluate_all_retrieval():
+def evaluate_all_retrieval(use_llm: bool = True):
     """Retrieval for all tests with keywords (unanswerable / off-topic ones are skipped). Yields (test, RetrievalEval, progress)."""
     tests = [t for t in load_tests() if t.keywords]
-    yield from _run_parallel(tests, evaluate_retrieval)
+    yield from _run_parallel(tests, lambda t: evaluate_retrieval(t, use_llm=use_llm))
 
 
 def evaluate_all_answers():
@@ -475,16 +479,20 @@ def evaluate_all_answers():
     yield from _run_parallel(load_tests(), lambda t: evaluate_answer(t)[0])
 
 
-def evaluate_all_full():
-    """Retrieval + answers + faithfulness from one retrieval call per test. Yields (test, FullResult, progress)."""
-    yield from _run_parallel(load_tests(), evaluate_full)
+def evaluate_all_full(use_llm_relevance: bool = True):
+    """Retrieval + answers + faithfulness from one retrieval call per test. Yields (result, completed, total, progress)."""
+    tests = load_tests()
+    total = len(tests)
+    for _test, result, progress in _run_parallel(tests, lambda t: evaluate_full(t, use_llm_relevance=use_llm_relevance)):
+        yield result, round(progress * total), total, progress
 
 
 # ----------------------------------------------------------------------------------------------
-# Summaries, persistence
+# Summaries, persistence, run history
 # ----------------------------------------------------------------------------------------------
-RETRIEVAL_METRICS = ["mrr", "ndcg", "precision_at_k", "recall_at_k", "gold_mrr", "keyword_coverage"]
-ANSWER_METRICS = ["accuracy", "completeness", "relevance", "faithfulness"]
+METRICS_RETRIEVAL = ["mrr", "ndcg", "precision_at_k", "recall_at_k", "keyword_coverage"]
+METRICS_ANSWER = ["accuracy", "completeness", "relevance", "faithfulness"]
+EXTRA_RETRIEVAL = ["gold_mrr", "avg_first_rank"]
 
 
 def _mean(values) -> Optional[float]:
@@ -492,47 +500,107 @@ def _mean(values) -> Optional[float]:
     return statistics.fmean(values) if values else None
 
 
+def _stats(values) -> dict:
+    vals = [v for v in values if v is not None]
+    if not vals:
+        return {"mean": 0.0, "stdev": 0.0}
+    return {"mean": statistics.fmean(vals), "stdev": statistics.stdev(vals) if len(vals) > 1 else 0.0}
+
+
+def _value(r: FullResult, metric: str):
+    if metric in METRICS_RETRIEVAL or metric in EXTRA_RETRIEVAL:
+        return getattr(r.retrieval, metric)
+    if metric == "faithfulness":
+        return r.faithfulness.faithfulness
+    return getattr(r.answer_eval, metric)
+
+
 def summarize(results: list[FullResult], failed: int = 0) -> dict:
+    """{metric: {mean, stdev}, ..., by_category: {category: {metric: mean}}}. Retrieval means skip tests without keywords."""
     with_kw = [r for r in results if r.test.keywords]
-    summary = {"tests": len(results), "failed": failed, "retrieval": {}, "answer": {}, "by_category": {}}
-    for m in RETRIEVAL_METRICS:
-        summary["retrieval"][m] = _mean(getattr(r.retrieval, m) for r in with_kw)
-    summary["retrieval"]["avg_first_rank"] = _mean(r.retrieval.avg_first_rank for r in with_kw)
-    for m in ANSWER_METRICS:
-        summary["answer"][m] = _mean(getattr(r.answer, m) for r in results)
-    for cat in sorted({r.test.category for r in results}):
-        rs = [r for r in results if r.test.category == cat]
-        summary["by_category"][cat] = {
-            "n": len(rs),
-            **{m: _mean(getattr(r.answer, m) for r in rs) for m in ANSWER_METRICS},
-            "mrr": _mean(r.retrieval.mrr for r in rs if r.test.keywords),
-            "recall_at_k": _mean(r.retrieval.recall_at_k for r in rs if r.test.keywords),
-        }
+    summary: dict = {"tests": len(results), "failed": failed}
+    for m in METRICS_RETRIEVAL + EXTRA_RETRIEVAL:
+        summary[m] = _stats(_value(r, m) for r in with_kw)
+    for m in METRICS_ANSWER:
+        summary[m] = _stats(_value(r, m) for r in results)
+    by_category = {}
+    for cat in sorted({r.category for r in results}):
+        rs = [r for r in results if r.category == cat]
+        row = {"tests": len(rs)}
+        for m in METRICS_RETRIEVAL:
+            row[m] = round(_stats(_value(r, m) for r in rs if r.test.keywords)["mean"], 3)
+        for m in METRICS_ANSWER:
+            row[m] = round(_stats(_value(r, m) for r in rs)["mean"], 3)
+        by_category[cat] = row
+    summary["by_category"] = by_category
     return summary
 
 
-def save_run(results: list[FullResult], summary: dict) -> Path:
-    """Write per-question CSV + append the summary (with config) to history.jsonl."""
+def _record(r: FullResult) -> dict:
+    rt = r.retrieval
+    return {
+        "category": r.category, "question": r.question, "reference_answer": r.test.reference_answer,
+        "generated_answer": r.generated_answer,
+        "retrieval": rt.model_dump(),
+        "accuracy": r.answer_eval.accuracy, "completeness": r.answer_eval.completeness,
+        "relevance": r.answer_eval.relevance, "faithfulness": r.faithfulness.faithfulness,
+        "feedback": r.answer_eval.feedback, "faithfulness_feedback": r.faithfulness.feedback,
+        "elapsed_seconds": round(r.elapsed_seconds, 2),
+    }
+
+
+def save_full_run(results: list[FullResult], failed: Optional[int] = None) -> dict:
+    """Write run-<id>.json + run-<id>.csv (worst accuracy first) and append a row to history.jsonl."""
+    failed = len(LAST_RUN_FAILURES) if failed is None else failed
+    summary = summarize(results, failed)
+    now = datetime.now(timezone.utc)
+    run_id = now.strftime("%Y%m%d-%H%M%S")
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    csv_path = RESULTS_DIR / f"run-{run_id}.csv"
+    json_path, csv_path = RESULTS_DIR / f"run-{run_id}.json", RESULTS_DIR / f"run-{run_id}.csv"
+    config = {"judge_model": JUDGE_MODEL, "k": RETRIEVAL_K, "workers": MAX_WORKERS}
+    timestamp = now.isoformat(timespec="seconds")
+
+    json_path.write_text(json.dumps({
+        "run_id": run_id, "timestamp": timestamp, "config": config, "summary": summary,
+        "failures": list(LAST_RUN_FAILURES), "results": [_record(r) for r in results],
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["category", "question", "mrr", "ndcg", "precision_at_k", "recall_at_k", "gold_mrr", "keyword_coverage",
                     "grades", "retrieved_sections", "accuracy", "completeness", "relevance", "faithfulness",
                     "generated_answer", "reference_answer", "feedback", "faithfulness_feedback"])
-        for r in sorted(results, key=lambda r: r.answer.accuracy):  # worst first
-            rt, an = r.retrieval, r.answer
-            w.writerow([r.test.category, r.test.question, f"{rt.mrr:.3f}", f"{rt.ndcg:.3f}", f"{rt.precision_at_k:.3f}",
-                        "" if rt.recall_at_k is None else f"{rt.recall_at_k:.3f}",
-                        "" if rt.gold_mrr is None else f"{rt.gold_mrr:.3f}", f"{rt.keyword_coverage:.1f}",
-                        rt.relevance_grades, " | ".join(rt.retrieved_sections),
-                        an.accuracy, an.completeness, an.relevance, an.faithfulness,
-                        r.generated_answer, r.test.reference_answer, an.feedback, an.faithfulness_feedback])
-    config = {"judge_model": JUDGE_MODEL, "k": RETRIEVAL_K, "workers": MAX_WORKERS, "tests_file": "tests.jsonl"}
+        for r in sorted(results, key=lambda r: r.answer_eval.accuracy):
+            rt = r.retrieval
+            w.writerow([r.category, r.question, f"{rt.mrr:.3f}", f"{rt.ndcg:.3f}", f"{rt.precision_at_k:.3f}",
+                        f"{rt.recall_at_k:.3f}", "" if rt.gold_mrr is None else f"{rt.gold_mrr:.3f}",
+                        f"{rt.keyword_coverage:.1f}", rt.relevance_grades, " | ".join(rt.retrieved_sections),
+                        r.answer_eval.accuracy, r.answer_eval.completeness, r.answer_eval.relevance,
+                        r.faithfulness.faithfulness, r.generated_answer, r.test.reference_answer,
+                        r.answer_eval.feedback, r.faithfulness.feedback])
+
+    entry = {"run_id": run_id, "timestamp": timestamp, "config": config, "tests": len(results), "failed": failed}
+    for m in METRICS_RETRIEVAL + METRICS_ANSWER + ["gold_mrr"]:
+        entry[m] = summary[m]
     with open(HISTORY_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps({"run_id": run_id, "config": config, "summary": summary}, ensure_ascii=False) + "\n")
-    return csv_path
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    return {"summary": summary, "json_path": str(json_path), "csv_path": str(csv_path), "run_id": run_id, "failed": failed}
+
+
+def load_run_history() -> list[dict]:
+    """Saved runs, newest first. Skips unreadable lines and entries from older formats."""
+    if not HISTORY_FILE.exists():
+        return []
+    entries = []
+    for line in HISTORY_FILE.read_text(encoding="utf-8").splitlines():
+        try:
+            entry = json.loads(line)
+        except Exception:
+            continue
+        if "run_id" in entry and isinstance(entry.get("accuracy"), dict):
+            entry.setdefault("timestamp", "")
+            entries.append(entry)
+    return entries[::-1]
 
 
 def _fmt(x: Optional[float], digits: int = 3) -> str:
@@ -540,18 +608,18 @@ def _fmt(x: Optional[float], digits: int = 3) -> str:
 
 
 def print_summary(summary: dict) -> None:
+    mean = lambda m: summary[m]["mean"]
     print(f"\n{'=' * 70}\nTests: {summary['tests']}   Failed: {summary['failed']}")
-    r, a = summary["retrieval"], summary["answer"]
     print("\nRetrieval (LLM-graded):  MRR %s | nDCG %s | P@k %s | first rank %s" % (
-        _fmt(r["mrr"]), _fmt(r["ndcg"]), _fmt(r["precision_at_k"]), _fmt(r["avg_first_rank"], 2)))
-    print("Retrieval (gold):        recall@k %s | gold MRR %s" % (_fmt(r["recall_at_k"]), _fmt(r["gold_mrr"])))
-    print("Keyword coverage (diagnostic): %s%%" % _fmt(r["keyword_coverage"], 1))
+        _fmt(mean("mrr")), _fmt(mean("ndcg")), _fmt(mean("precision_at_k")), _fmt(mean("avg_first_rank"), 2)))
+    print("Retrieval (gold):        recall@k %s | gold MRR %s" % (_fmt(mean("recall_at_k")), _fmt(mean("gold_mrr"))))
+    print("Keyword coverage (diagnostic): %s%%" % _fmt(mean("keyword_coverage"), 1))
     print("\nAnswers: accuracy %s | completeness %s | relevance %s | faithfulness %s" % (
-        _fmt(a["accuracy"], 2), _fmt(a["completeness"], 2), _fmt(a["relevance"], 2), _fmt(a["faithfulness"], 2)))
-    print("\nBy category (n, accuracy, completeness, faithfulness, MRR, gold recall):")
+        _fmt(mean("accuracy"), 2), _fmt(mean("completeness"), 2), _fmt(mean("relevance"), 2), _fmt(mean("faithfulness"), 2)))
+    print("\nBy category:")
     for cat, c in summary["by_category"].items():
-        print(f"  {cat:13s} n={c['n']:3d}  acc {_fmt(c['accuracy'],2)}  comp {_fmt(c['completeness'],2)}  "
-              f"faith {_fmt(c['faithfulness'],2)}  mrr {_fmt(c['mrr'])}  recall {_fmt(c['recall_at_k'])}")
+        print(f"  {cat:13s} n={c['tests']:3d}  acc {c['accuracy']:.2f}  comp {c['completeness']:.2f}  "
+              f"faith {c['faithfulness']:.2f}  mrr {c['mrr']:.3f}  recall {c['recall_at_k']:.3f}")
     print("=" * 70)
 
 
@@ -567,11 +635,11 @@ def run_cli_evaluation(test_number: int):
     print(f"\n{'=' * 80}\nTest #{test_number}  [{test.category}]\n{'=' * 80}")
     print(f"Question: {test.question}\nKeywords: {test.keywords}\nGold: {test.gold_sections}\nReference: {test.reference_answer}")
     result = evaluate_full(test)
-    rt, an = result.retrieval, result.answer
+    rt, an, fa = result.retrieval, result.answer_eval, result.faithfulness
     print(f"\nRetrieved: {rt.retrieved_sections}\nGrades (0-2): {rt.relevance_grades}")
-    print(f"MRR {rt.mrr:.3f} | nDCG {rt.ndcg:.3f} | P@k {rt.precision_at_k:.3f} | recall {_fmt(rt.recall_at_k)} | keywords {rt.keywords_found}/{rt.total_keywords}")
-    print(f"\nGenerated Answer:\n{result.generated_answer}\n\nFeedback:\n{an.feedback}\n\nFaithfulness feedback:\n{an.faithfulness_feedback}")
-    print(f"\nAccuracy {an.accuracy:.1f} | Completeness {an.completeness:.1f} | Relevance {an.relevance:.1f} | Faithfulness {an.faithfulness:.1f}\n")
+    print(f"MRR {rt.mrr:.3f} | nDCG {rt.ndcg:.3f} | P@k {rt.precision_at_k:.3f} | recall {rt.recall_at_k:.3f} | keywords {rt.keywords_found}/{rt.total_keywords}")
+    print(f"\nGenerated Answer:\n{result.generated_answer}\n\nFeedback:\n{an.feedback}\n\nFaithfulness feedback:\n{fa.feedback}")
+    print(f"\nAccuracy {an.accuracy:.1f} | Completeness {an.completeness:.1f} | Relevance {an.relevance:.1f} | Faithfulness {fa.faithfulness:.1f}\n")
 
 
 def run_batch(retrieval_only: bool = False):
@@ -579,19 +647,19 @@ def run_batch(retrieval_only: bool = False):
         rows = []
         for test, result, progress in evaluate_all_retrieval():
             rows.append(result)
-            print(f"[{progress:4.0%}] mrr {result.mrr:.2f} recall {_fmt(result.recall_at_k, 2)}  {test.question}")
+            print(f"[{progress:4.0%}] mrr {result.mrr:.2f} recall {result.recall_at_k:.2f}  {test.question}")
         print(f"\nRetrieval-only: {len(rows)} ok, {len(LAST_RUN_FAILURES)} failed")
-        for m in ("mrr", "ndcg", "precision_at_k", "recall_at_k", "gold_mrr", "keyword_coverage"):
+        for m in METRICS_RETRIEVAL + ["gold_mrr"]:
             print(f"  {m}: {_fmt(_mean(getattr(r, m) for r in rows))}")
         return
     results = []
-    for test, result, progress in evaluate_all_full():
+    for result, completed, total, progress in evaluate_all_full():
         results.append(result)
-        print(f"[{progress:4.0%}] acc {result.answer.accuracy:.0f} comp {result.answer.completeness:.0f} "
-              f"faith {result.answer.faithfulness:.0f}  {test.question}")
-    summary = summarize(results, failed=len(LAST_RUN_FAILURES))
-    print_summary(summary)
-    print("Saved:", save_run(results, summary))
+        print(f"[{completed}/{total}] acc {result.answer_eval.accuracy:.0f} comp {result.answer_eval.completeness:.0f} "
+              f"faith {result.faithfulness.faithfulness:.0f}  {result.question}")
+    saved = save_full_run(results)
+    print_summary(saved["summary"])
+    print("Saved:", saved["json_path"], "|", saved["csv_path"])
     for line in LAST_RUN_FAILURES:
         print("FAILED:", line)
 

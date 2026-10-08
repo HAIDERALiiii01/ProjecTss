@@ -1,18 +1,13 @@
 """
-RAG Evaluation Dashboard (Gradio)
-=================================
-Two working modes plus a history view:
+Digital Twin Evaluation Dashboard (Gradio)
+==========================================
+- "Full Evaluation": retrieval + answer quality + faithfulness off a single retrieval call per test
+  (see evaluation/eval.py). Saves JSON + CSV to evaluation/results/ and adds a row to the run history.
+- "Retrieval Only": retrieval metrics only, no answers generated. Uses one cheap, cached LLM
+  relevance call per test (untick the box for a keyword-only fallback with zero judge cost).
+- "Run History": every saved Full Evaluation run, to spot regressions.
 
-- "Full Evaluation" — the recommended path. Runs retrieval + answer quality +
-  faithfulness together off a single retrieval call per test (see eval.py),
-  saves results to disk, and adds a row to the run history.
-- "Retrieval Only" — fast, zero LLM-judge cost. Use this to iterate on
-  chunking/embedding/search changes without burning judge tokens.
-- "Run History" — every saved Full Evaluation run, to spot regressions.
-
-(An "Answer Only" mode was deliberately dropped: it costs the same as Full
-Evaluation but reports fewer metrics and still double-fetches context, so
-there's no scenario where it beats Full Evaluation.)
+Run from the project root:  python evaluator.py
 """
 
 from __future__ import annotations
@@ -32,12 +27,13 @@ from evaluation.eval import (
 load_dotenv(override=True)
 
 # ---------------------------------------------------------------------------
-# Color-coding thresholds (single source of truth)
+# Color-coding thresholds (single source of truth): (green >= first, amber >= second)
+# Precision@5 is naturally low for a twin: most answers live in ONE chunk, so ~0.2-0.4 is healthy.
 # ---------------------------------------------------------------------------
 THRESHOLDS = {
     "mrr": (0.90, 0.75),
     "ndcg": (0.90, 0.75),
-    "precision": (0.90, 0.75),
+    "precision": (0.40, 0.25),
     "recall": (0.90, 0.75),
     "coverage": (90.0, 75.0),
     "accuracy": (4.5, 4.0),
@@ -86,48 +82,56 @@ def format_metric_html(
     """
 
 
-def completion_banner(count: int) -> str:
+def completion_banner(count: int, failed: int = 0) -> str:
+    failed_html = ""
+    if failed:
+        failed_html = (
+            f' · <span style="color:#a94442;">{failed} test(s) failed and are NOT in the averages '
+            f"(see the console)</span>"
+        )
     return f"""
     <div style="margin-top: 20px; padding: 10px; background-color: #d4edda; border-radius: 5px;
                 text-align: center; border: 1px solid #c3e6cb;">
         <span style="font-size: 14px; color: #155724; font-weight: bold;">
-            ✓ Evaluation complete · {count} tests
+            ✓ Evaluation complete · {count} tests{failed_html}
         </span>
     </div>
     """
 
 
+EMPTY_HTML = "<div style='color:red;padding:20px;'>No tests completed — check the console for errors.</div>"
+
+
 # ---------------------------------------------------------------------------
 # Retrieval-only tab
 # ---------------------------------------------------------------------------
-def run_retrieval_evaluation(progress=gr.Progress()):
-    total_mrr = total_ndcg = total_precision = total_recall = total_coverage = 0.0
+def run_retrieval_evaluation(use_llm: bool = True, progress=gr.Progress()):
+    totals = defaultdict(float)
     category_mrr = defaultdict(list)
     count = 0
 
-    for test, result, prog_value in evaluate_all_retrieval():
+    for test, result, prog_value in evaluate_all_retrieval(use_llm=use_llm):
         count += 1
-        total_mrr += result.mrr
-        total_ndcg += result.ndcg
-        total_precision += result.precision_at_k
-        total_recall += result.recall_at_k
-        total_coverage += result.keyword_coverage
+        totals["mrr"] += result.mrr
+        totals["ndcg"] += result.ndcg
+        totals["precision"] += result.precision_at_k
+        totals["recall"] += result.recall_at_k
+        totals["coverage"] += result.keyword_coverage
         category_mrr[test.category].append(result.mrr)
         progress(prog_value, desc=f"Evaluating retrieval · test {count}...")
 
     if count == 0:
-        return (
-            "<div style='color:red;padding:20px;'>No tests completed — check logs for errors.</div>",
-            pd.DataFrame(),
-        )
+        return EMPTY_HTML, pd.DataFrame()
 
+    mode = "LLM-graded relevance" if use_llm else "keyword fallback (no LLM)"
     final_html = f"""
     <div style="padding: 0;">
-        {format_metric_html("Mean Reciprocal Rank (MRR)", total_mrr / count, "mrr")}
-        {format_metric_html("Normalized DCG (nDCG)", total_ndcg / count, "ndcg")}
-        {format_metric_html("Precision@k", total_precision / count, "precision")}
-        {format_metric_html("Recall@k", total_recall / count, "recall")}
-        {format_metric_html("Keyword Coverage", total_coverage / count, "coverage", is_percentage=True)}
+        <div style="font-size: 13px; color: #666; margin-bottom: 6px;">Relevance mode: {mode}</div>
+        {format_metric_html("Mean Reciprocal Rank (MRR)", totals["mrr"] / count, "mrr")}
+        {format_metric_html("Normalized DCG (nDCG)", totals["ndcg"] / count, "ndcg")}
+        {format_metric_html("Precision@k", totals["precision"] / count, "precision")}
+        {format_metric_html("Recall@k (gold chunks)", totals["recall"] / count, "recall")}
+        {format_metric_html("Keyword Coverage (diagnostic)", totals["coverage"] / count, "coverage", is_percentage=True)}
         {completion_banner(count)}
     </div>
     """
@@ -143,11 +147,6 @@ def run_retrieval_evaluation(progress=gr.Progress()):
 # Full (combined, parallelized, persisted) evaluation tab
 # ---------------------------------------------------------------------------
 def run_full_evaluation(progress=gr.Progress()):
-    """
-    Runs retrieval + answer + faithfulness together off a single retrieval call
-    per test, in parallel across tests. Saves results to disk at the end and
-    returns a per-test detail table plus download links.
-    """
     results = []
     for result, completed, total, prog_value in evaluate_all_full():
         results.append(result)
@@ -155,40 +154,34 @@ def run_full_evaluation(progress=gr.Progress()):
 
     if not results:
         empty = pd.DataFrame()
-        return (
-            "<div style='color:red;padding:20px;'>No tests completed — check logs for errors.</div>",
-            empty, empty, None, None, empty,
-        )
+        return EMPTY_HTML, empty, empty, None, None, load_history_df()
 
     saved = save_full_run(results)
     summary = saved["summary"]
 
+    def tile(label, key, metric_type, **kw):
+        return format_metric_html(label, summary[key]["mean"], metric_type, stdev=summary[key]["stdev"], **kw)
+
     final_html = f"""
     <div style="padding: 0;">
-        {format_metric_html("MRR", summary["mrr"]["mean"], "mrr", stdev=summary["mrr"]["stdev"])}
-        {format_metric_html("nDCG", summary["ndcg"]["mean"], "ndcg", stdev=summary["ndcg"]["stdev"])}
-        {format_metric_html("Precision@k", summary["precision_at_k"]["mean"], "precision", stdev=summary["precision_at_k"]["stdev"])}
-        {format_metric_html("Recall@k", summary["recall_at_k"]["mean"], "recall", stdev=summary["recall_at_k"]["stdev"])}
-        {format_metric_html("Keyword Coverage", summary["keyword_coverage"]["mean"], "coverage", is_percentage=True, stdev=summary["keyword_coverage"]["stdev"])}
-        {format_metric_html("Accuracy", summary["accuracy"]["mean"], "accuracy", score_format=True, stdev=summary["accuracy"]["stdev"])}
-        {format_metric_html("Completeness", summary["completeness"]["mean"], "completeness", score_format=True, stdev=summary["completeness"]["stdev"])}
-        {format_metric_html("Relevance", summary["relevance"]["mean"], "relevance", score_format=True, stdev=summary["relevance"]["stdev"])}
-        {format_metric_html("Faithfulness", summary["faithfulness"]["mean"], "faithfulness", score_format=True, stdev=summary["faithfulness"]["stdev"])}
-        {completion_banner(len(results))}
+        {tile("MRR (LLM-graded)", "mrr", "mrr")}
+        {tile("nDCG (LLM-graded)", "ndcg", "ndcg")}
+        {tile("Precision@k", "precision_at_k", "precision")}
+        {tile("Recall@k (gold chunks)", "recall_at_k", "recall")}
+        {tile("Keyword Coverage (diagnostic)", "keyword_coverage", "coverage", is_percentage=True)}
+        {tile("Accuracy", "accuracy", "accuracy", score_format=True)}
+        {tile("Completeness", "completeness", "completeness", score_format=True)}
+        {tile("Relevance", "relevance", "relevance", score_format=True)}
+        {tile("Faithfulness", "faithfulness", "faithfulness", score_format=True)}
+        {completion_banner(len(results), saved["failed"])}
     </div>
     """
 
-    # Per-category breakdown across every metric
-    category_rows = []
-    for category, metrics in summary["by_category"].items():
-        row = {"Category": category}
-        row.update(metrics)
-        category_rows.append(row)
+    category_rows = [{"Category": category, **metrics} for category, metrics in summary["by_category"].items()]
     category_df = pd.DataFrame(category_rows)
 
-    # Per-test detail table for drilling into individual failures
-    def _fmt_rank(v: float) -> str:
-        return "—" if v == float("inf") else f"{v:.1f}"
+    def _fmt_rank(v) -> str:
+        return "—" if v is None or v == float("inf") else f"{v:.1f}"
 
     detail_rows = [
         {
@@ -197,11 +190,14 @@ def run_full_evaluation(progress=gr.Progress()):
             "MRR": round(r.retrieval.mrr, 3),
             "Precision@k": round(r.retrieval.precision_at_k, 3),
             "Recall@k": round(r.retrieval.recall_at_k, 3),
-            "Avg First Rank": _fmt_rank(r.retrieval.avg_first_rank),
+            "First Rank": _fmt_rank(r.retrieval.avg_first_rank),
+            "Grades (0-2)": str(r.retrieval.relevance_grades),
+            "Retrieved": " | ".join(r.retrieval.retrieved_sections),
             "Accuracy": r.answer_eval.accuracy,
             "Completeness": r.answer_eval.completeness,
             "Relevance": r.answer_eval.relevance,
             "Faithfulness": r.faithfulness.faithfulness,
+            "Judge feedback": r.answer_eval.feedback,
             "Time (s)": round(r.elapsed_seconds, 1),
         }
         for r in results
@@ -226,8 +222,8 @@ def load_history_df() -> pd.DataFrame:
             "mrr", "ndcg", "precision_at_k", "recall_at_k", "keyword_coverage",
             "accuracy", "completeness", "relevance", "faithfulness",
         ):
-            if metric in entry and isinstance(entry[metric], dict):
-                row[metric] = entry[metric].get("mean")
+            if isinstance(entry.get(metric), dict):
+                row[metric] = round(entry[metric].get("mean", 0.0), 4)
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -235,17 +231,17 @@ def load_history_df() -> pd.DataFrame:
 def main():
     theme = gr.themes.Soft(font=["Inter", "system-ui", "sans-serif"])
 
-    with gr.Blocks(title="RAG Evaluation Dashboard", theme=theme) as app:
-        gr.Markdown("# 📊 RAG Evaluation Dashboard")
-        gr.Markdown("Evaluate retrieval and answer quality for the Insurellm RAG system")
+    with gr.Blocks(title="Digital Twin Evaluation Dashboard", theme=theme) as app:
+        gr.Markdown("# 📊 Digital Twin Evaluation Dashboard")
+        gr.Markdown("Evaluate retrieval and answer quality for the digital twin's RAG pipeline")
 
         with gr.Tabs():
             # ---------------- FULL EVALUATION (recommended) ----------------
             with gr.Tab("⚡ Full Evaluation (recommended)"):
                 gr.Markdown(
-                    "Runs retrieval + answer quality + faithfulness together, in parallel, "
-                    "off a single retrieval call per test. Results are saved to `results/` "
-                    "as JSON and CSV, and added to the run history below."
+                    "Runs the full twin (rewrite, retrieval, answer) with tool notifications disabled, then judges "
+                    "retrieval relevance, answer quality and faithfulness. Results are saved to "
+                    "`evaluation/results/` as JSON and CSV, and added to the run history."
                 )
                 full_button = gr.Button("Run Full Evaluation", variant="primary", size="lg")
                 full_metrics = gr.HTML(
@@ -262,17 +258,19 @@ def main():
                     csv_download = gr.File(label="Download CSV")
 
             # ---------------- Retrieval-only ----------------
-            with gr.Tab("🔍 Retrieval Only (fast, no LLM cost)"):
+            with gr.Tab("🔍 Retrieval Only"):
                 gr.Markdown(
-                    "Skips the LLM judges entirely — use this to quickly check the effect of "
-                    "chunking, embedding, or search changes without burning judge-model tokens."
+                    "Retrieval metrics only, no answers generated. Tests without keywords "
+                    "(unanswerable / off-topic) are skipped here. Relevance is graded by one cheap LLM call per "
+                    "test (cached across runs); untick the box for a free keyword-only fallback."
                 )
+                use_llm_box = gr.Checkbox(value=True, label="Use LLM relevance grading (same metrics as Full Evaluation)")
                 retrieval_button = gr.Button("Run Retrieval Evaluation", variant="secondary", size="lg")
                 with gr.Row():
                     with gr.Column(scale=1):
                         retrieval_metrics = gr.HTML(
                             "<div style='padding: 20px; text-align: center; color: #999;'>"
-                            "Click 'Run Evaluation' to start</div>"
+                            "Click 'Run Retrieval Evaluation' to start</div>"
                         )
                     with gr.Column(scale=1):
                         retrieval_chart = gr.BarPlot(
@@ -294,7 +292,9 @@ def main():
                 json_download, csv_download, history_table,
             ],
         )
-        retrieval_button.click(fn=run_retrieval_evaluation, outputs=[retrieval_metrics, retrieval_chart])
+        retrieval_button.click(
+            fn=run_retrieval_evaluation, inputs=[use_llm_box], outputs=[retrieval_metrics, retrieval_chart]
+        )
         refresh_history_button.click(fn=load_history_df, outputs=[history_table])
 
     app.launch(inbrowser=True)

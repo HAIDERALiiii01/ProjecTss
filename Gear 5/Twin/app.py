@@ -1,5 +1,5 @@
 import gradio as gr
-from pro_implementation.answer import answer_question
+from answer import answer_question
 from styles import CSS, JS, EXAMPLES
 
 
