@@ -59,6 +59,13 @@ The Markdown knowledge base is never queried directly. `ingest.py` splits it int
 
 ---
 
+## 🛠️ Built-in tools
+
+The twin can take actions, not just answer:
+
+- **Record visitor email:** if a recruiter wants to get in touch, the twin saves their email address.
+- **Record unanswered questions:** if a question points to a real gap in the knowledge base, it's logged (and you're notified) so you know what to add next. Off-topic or trivial questions don't trigger it.
+
 ## 📁 Project structure
 
 ```text
