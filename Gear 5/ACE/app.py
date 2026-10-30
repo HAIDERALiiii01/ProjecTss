@@ -11,21 +11,21 @@ async def run(query: str):
         yield status_update
 
 
-with gr.Blocks(title="RAVEN | Hunt for knowledge. Deliver intelligence.") as ui:
+with gr.Blocks(title="Ace Ventura | The Digital Detective") as ui:
     gr.HTML(HEADER_HTML)
 
     with gr.Row(elem_classes="dr-query-row"):
         query_textbox = gr.Textbox(
-            placeholder="What should RAVEN hunt for?",
+            placeholder="What case should Ace crack?",
             show_label=False,
             container=False,
             autofocus=True,
             elem_id="dr-query",
             scale=5,
         )
-        run_button = gr.Button("Hunt", variant="primary", elem_id="dr-run", scale=1)
+        run_button = gr.Button("Investigate!", variant="primary", elem_id="dr-run", scale=1)
 
-    gr.HTML('<div class="dr-examples-label">Try one</div>')
+    gr.HTML('<div class="dr-examples-label">Open a case</div>')
     gr.Examples(examples=EXAMPLES, inputs=query_textbox, elem_id="dr-examples")
 
     report = gr.Markdown(elem_id="dr-report")
